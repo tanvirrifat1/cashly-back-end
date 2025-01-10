@@ -1,0 +1,96 @@
+
+// const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
+//   const session = await startSession();
+
+//   try {
+//     session.startTransaction();
+
+//     // Validate required fields
+//     if (!payload.email) {
+//       throw new ApiError(StatusCodes.BAD_REQUEST, 'Please provide email');
+//     }
+//     if (!payload.phone) {
+//       throw new ApiError(
+//         StatusCodes.BAD_REQUEST,
+//         'Please provide phone number'
+//       );
+//     }
+
+//     const isEmail = await User.findOne({ email: payload.email });
+//     if (isEmail) {
+//       throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exists');
+//     }
+
+//     // Create user first
+//     const userPayload = {
+//       email: payload.email,
+//       password: payload.password,
+//       role: USER_ROLES.BUYER,
+//     };
+
+//     const [user] = await User.create([userPayload], { session });
+//     if (!user) {
+//       throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
+//     }
+
+//     // Create client and associate with user
+//     const buyerpayload = {
+//       ...payload,
+//       userId: user._id,
+//     };
+
+//     const [client] = await Buyer.create([buyerpayload], { session });
+//     if (!client) {
+//       throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user');
+//     }
+
+//     // Update user with client reference
+//     const updatedUser = await User.findOneAndUpdate(
+//       { _id: user._id },
+//       { $set: { client: client._id } },
+//       { session, new: true }
+//     );
+//     if (!updatedUser) {
+//       throw new ApiError(StatusCodes.NOT_FOUND, 'User not found for update');
+//     }
+
+//     // Generate OTP
+//     const otp = generateOTP();
+//     const authentication = {
+//       oneTimeCode: otp,
+//       expireAt: new Date(Date.now() + 5 * 60000), // OTP valid for 3 minutes
+//     };
+
+//     // Send OTP via Twilio
+//     await twilioClient.messages.create({
+//       body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+//       from: process.env.TWILIO_PHONE_NUMBER, // Twilio phone number
+//       to: payload.phone,
+//     });
+
+//     // Update user with authentication details
+//     const updatedAuthenticationUser = await User.findOneAndUpdate(
+//       { _id: user._id },
+//       { $set: { authentication } },
+//       { session, new: true }
+//     );
+
+//     if (!updatedAuthenticationUser) {
+//       throw new ApiError(
+//         StatusCodes.NOT_FOUND,
+//         'User not found for authentication update'
+//       );
+//     }
+
+//     // Commit transaction
+//     await session.commitTransaction();
+
+//     return updatedAuthenticationUser;
+//   } catch (error) {
+//     // Abort transaction on error
+//     await session.abortTransaction();
+//     throw error;
+//   } finally {
+//     await session.endSession();
+//   }
+// };
