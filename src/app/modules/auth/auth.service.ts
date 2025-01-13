@@ -48,12 +48,12 @@ const loginUserFromDB = async (payload: ILoginData) => {
 
   //check login status
 
-  // if (isExistUser.loginStatus === 'pending') {
-  //   throw new ApiError(
-  //     StatusCodes.BAD_REQUEST,
-  //     'Please approve your account, then try to login again'
-  //   );
-  // }
+  if (isExistUser.isSuspended === true) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Account is suspended, Please contact the admin'
+    );
+  }
 
   //check match password
   if (
