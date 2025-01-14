@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { User } from '../user/user.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
+import { twilioClient } from '../../../shared/mesg.send';
 
 const suspendUser = async (userId: string, days: number) => {
   const suspensionEndDate = new Date();
@@ -44,6 +45,14 @@ const suspendUser = async (userId: string, days: number) => {
     text: `Your account has been suspended for ${days} days.`,
   });
 
+  if (agency?.loginStatus === 'approved') {
+    await twilioClient.messages.create({
+      body: `Your account has been suspended for ${days} days.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: agency?.phone || '',
+    });
+  }
+
   // Notify sub-users
   suspendedSubUsers.forEach(subUser => {
     if (subUser) {
@@ -70,6 +79,8 @@ const reactivateUsers = async () => {
     throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended agencies found');
   }
 
+  console.log(agencies);
+
   // Reactivate each agency and its sub-users
   for (const agency of agencies) {
     // Reactivate the agency
@@ -81,8 +92,6 @@ const reactivateUsers = async () => {
 
     const subUsers = await User.find({
       agencis: agency._id,
-      // isSuspended: true,
-      // suspensionEndDate: { $lte: now },
     });
 
     // Reactivate each sub-user
@@ -97,11 +106,19 @@ const reactivateUsers = async () => {
     );
   }
 
+  if (agencies[0].loginStatus === 'approved') {
+    await twilioClient.messages.create({
+      body: `Your account has been reactivated.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: agencies[0].phone || '',
+    });
+  }
+
   return { message: 'Agencies and sub-users reactivated successfully.' };
 };
 
 const getUserStatus = async (userId: string) => {
-  const user = await User.findById(userId).populate('driver client');
+  const user = await User.findById(userId).populate('agency buyer');
 
   if (!user) {
     throw new Error('User not found');
@@ -167,6 +184,14 @@ const ActiveUser = async (userId: string) => {
       sendNotifications(subUserNotification);
     }
   });
+
+  if (user?.loginStatus === 'approved') {
+    await twilioClient.messages.create({
+      body: `Your account has been reactivated.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: user.phone,
+    });
+  }
 
   return { user, reactivatedSubUsers };
 };

@@ -19,6 +19,12 @@ router.patch(
   }
 );
 
+router.get(
+  '/get-all-buyers',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  BuyerController.getAllBuyers
+);
+
 router.get('/get-all-buyer', BuyerController.getAllBuyer);
 
 export const BuyerRoutes = router;

@@ -1,11 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
-import { getFilePathMultiple } from '../../../shared/getFilePath';
 import sendResponse from '../../../shared/sendResponse';
 import { BuyerService } from './buyer.service';
 import { Request, Response } from 'express';
 import ApiError from '../../../errors/ApiError';
-import { AgencyService } from '../agency/agency.service';
 
 const updateBuyerProfile = catchAsync(async (req, res) => {
   const userId = req.user.id;
@@ -66,7 +64,18 @@ const getAllBuyer = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllBuyers = catchAsync(async (req: Request, res: Response) => {
+  const result = await BuyerService.getAllBuyers(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Buyers retrieved for admin successfully',
+    data: result,
+  });
+});
+
 export const BuyerController = {
   updateBuyerProfile,
   getAllBuyer,
+  getAllBuyers,
 };
