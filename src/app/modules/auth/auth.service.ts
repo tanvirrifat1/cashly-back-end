@@ -80,8 +80,10 @@ const loginUserFromDB = async (payload: ILoginData) => {
   return { accessToken, refreshToken };
 };
 
-const forgetPasswordToDB = async (phone: string) => {
-  const isExistUser = await User.isExistUserByPhone(phone);
+const forgetPasswordToDB = async (email: string) => {
+  const isExistUser = await User.isExistUserByEmail(email);
+
+  console.log(isExistUser, 'isExistUser');
 
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
@@ -107,13 +109,13 @@ const forgetPasswordToDB = async (phone: string) => {
     );
   }
 
-  await User.findOneAndUpdate({ phone }, { $set: { authentication } });
+  await User.findOneAndUpdate({ email }, { $set: { authentication } });
 };
 
 //verify email
 const verifyEmailToDB = async (payload: IVerifyEmail) => {
-  const { phone, oneTimeCode } = payload;
-  const isExistUser = await User.findOne({ phone }).select('+authentication');
+  const { email, oneTimeCode } = payload;
+  const isExistUser = await User.findOne({ email }).select('+authentication');
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
@@ -354,8 +356,8 @@ const newAccessTokenToUser = async (token: string) => {
 //   );
 // };
 
-const resendVerificationEmailToDB = async (phone: string) => {
-  const existingUser: any = await User.findOne({ phone: phone }).lean();
+const resendVerificationEmailToDB = async (email: string) => {
+  const existingUser: any = await User.findOne({ email: email }).lean();
 
   if (!existingUser) {
     throw new ApiError(
@@ -379,18 +381,18 @@ const resendVerificationEmailToDB = async (phone: string) => {
     // Send OTP via WhatsApp using Twilio
     await twilioClient.messages.create({
       from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
-      contentSid: process.env.TWILIO_VERIFY_SERVICE_SID,
-      contentVariables: '{"1":"409173"}',
+      contentSid: process.env.TWILIO_CONTACT_SID,
+      contentVariables: `{"1":"${otp}","2":"5"}`,
       to: `whatsapp:${existingUser.phone}`,
     });
 
     // Update the user with OTP and expiration time
     await User.findOneAndUpdate(
-      { phone: phone },
+      { email: email },
       { $set: { authentication } },
       { new: true }
     );
-    console.log('object');
+
     return 'OTP sent successfully';
   } catch (error) {
     throw new ApiError(

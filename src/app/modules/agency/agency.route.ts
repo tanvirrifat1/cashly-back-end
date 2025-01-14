@@ -19,6 +19,12 @@ router.patch(
   }
 );
 
+router.get(
+  '/get-all-agencies',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  AgencyController.getAllAgencies
+);
+
 router.get('/get-all-agency', AgencyController.getAllAgency);
 
 export const AgencyRoutes = router;

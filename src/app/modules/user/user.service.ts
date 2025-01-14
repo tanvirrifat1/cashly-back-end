@@ -239,19 +239,15 @@ const updateProfileToDB = async (
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  if (!isExistUser) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Blog not found');
-  }
-
   if (payload.image && isExistUser.image) {
     unlinkFile(isExistUser.image);
   }
 
-  const updateDoc = await User.findOneAndUpdate({ _id: id }, payload, {
+  const updateProfile = await User.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
 
-  return updateDoc;
+  return updateProfile;
 };
 
 const getSingleUser = async (id: string): Promise<IUser | null> => {

@@ -3,8 +3,8 @@ import { IAgency } from './agency.interface';
 import { Agency } from './agency.model';
 import ApiError from '../../../errors/ApiError';
 import unlinkFile from '../../../shared/unlinkFile';
-import { Buyer } from '../buyer/buyer.model';
 import { User } from '../user/user.model';
+import { USER_ROLES } from '../../../enums/user';
 
 const updateAgencyProfile = async (userId: string, value: IAgency) => {
   const isUser = await User.findById(userId);
@@ -56,7 +56,61 @@ const findUsersNearLocation = async (
   }
 };
 
+const getAllAgencies = async (query: Record<string, unknown>) => {
+  const { page, limit, searchTerm, ...filterData } = query;
+  const anyConditions: any[] = [];
+  anyConditions.push({ role: USER_ROLES.AGENCY });
+  // Add searchTerm condition if present
+  if (searchTerm) {
+    const categoriesIds = await Agency.find({
+      firstName: { $regex: searchTerm, $options: 'i' },
+    }).distinct('_id');
+
+    if (categoriesIds.length > 0) {
+      anyConditions.push({ client: { $in: categoriesIds } });
+    }
+  }
+
+  // Filter by additional filterData fields
+  if (Object.keys(filterData).length > 0) {
+    const filterConditions = Object.entries(filterData).map(
+      ([field, value]) => ({ [field]: value })
+    );
+    anyConditions.push({ $and: filterConditions });
+  }
+
+  // anyConditions.push({ verified: true });
+
+  // Combine all conditions
+  const whereConditions =
+    anyConditions.length > 0 ? { $and: anyConditions } : {};
+
+  // Pagination setup
+  const pages = parseInt(page as string) || 1;
+  const size = parseInt(limit as string) || 10;
+  const skip = (pages - 1) * size;
+
+  // Fetch campaigns
+  const result = await User.find(whereConditions)
+    .populate('agency')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(size)
+    .lean();
+
+  const count = await User.countDocuments(whereConditions);
+
+  return {
+    result,
+    meta: {
+      page: pages,
+      total: count,
+    },
+  };
+};
+
 export const AgencyService = {
   updateAgencyProfile,
   findUsersNearLocation,
+  getAllAgencies,
 };

@@ -35,7 +35,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const forgetPassword = catchAsync(async (req: Request, res: Response) => {
-  const phone = req.body.phone;
+  const phone = req.body.email;
   const result = await AuthService.forgetPasswordToDB(phone);
 
   sendResponse(res, {
@@ -97,8 +97,8 @@ const newAccessToken = catchAsync(async (req: Request, res: Response) => {
 
 const resendVerificationEmail = catchAsync(
   async (req: Request, res: Response) => {
-    const { phone } = req.body;
-    const result = await AuthService.resendVerificationEmailToDB(phone);
+    const { email } = req.body;
+    const result = await AuthService.resendVerificationEmailToDB(email);
 
     sendResponse(res, {
       success: true,

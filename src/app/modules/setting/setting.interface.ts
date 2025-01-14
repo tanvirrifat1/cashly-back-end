@@ -5,7 +5,3 @@ export type ITerms = {
 export type IPrivacy = {
   description: string;
 };
-
-export type IAboutUs = {
-  description: string;
-};

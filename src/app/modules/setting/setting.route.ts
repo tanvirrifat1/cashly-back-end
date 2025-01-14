@@ -7,26 +7,17 @@ const router = express.Router();
 
 router.post(
   '/create-terms',
-  auth(USER_ROLES.ADMIN),
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
   SettingController.createTermsAndCondition
 );
 router.get('/get-terms', SettingController.getTermsAndCondition);
 
 router.post(
-  '/create-pricy',
-  auth(USER_ROLES.ADMIN),
+  '/create-privacy',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
   SettingController.createReturnPolicy
 );
 
-router.get('/get-pricy', SettingController.getReturnPolicy);
-
-// about us
-router.post(
-  '/create-about-us',
-  auth(USER_ROLES.ADMIN),
-  SettingController.createAboutUS
-);
-
-router.get('/get-about-us', SettingController.getAboutUs);
+router.get('/get-privacy', SettingController.getReturnPolicy);
 
 export const SettingRoutes = router;

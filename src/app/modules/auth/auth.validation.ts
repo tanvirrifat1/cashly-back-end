@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const createVerifyEmailZodSchema = z.object({
   body: z.object({
-    phone: z.string({ required_error: 'Phone is required' }),
+    email: z.string({ required_error: 'Email is required' }),
     oneTimeCode: z
       .union([z.string().transform(val => parseFloat(val)), z.number()])
       .refine((val: any) => !isNaN(val), {
@@ -29,7 +29,7 @@ const createLoginZodSchemaForSocial = z.object({
 
 const createForgetPasswordZodSchema = z.object({
   body: z.object({
-    phone: z.string({ required_error: 'Phone is required' }),
+    email: z.string({ required_error: 'Email is required' }),
   }),
 });
 

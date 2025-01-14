@@ -40,8 +40,18 @@ const getAllDocument = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getAllDocumentForAdmin = catchAsync(async (req, res) => {
+  const result = await DocumentService.getAllDocumentForAdmin(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Document retrived for admin successfully',
+    data: result,
+  });
+});
 
 export const DocumentController = {
   createDocumentToDB,
   getAllDocument,
+  getAllDocumentForAdmin,
 };

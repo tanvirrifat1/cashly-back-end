@@ -46,8 +46,30 @@ const getAllDocuments = async (query: Record<string, unknown>, id: string) => {
   const meta = await blogQuery.countTotal();
   return { result, meta };
 };
+const getAllDocumentForAdmin = async (query: Record<string, unknown>) => {
+  const blogQuery = new QueryBuilder(
+    Document.find().populate({
+      path: 'userId',
+      select: 'buyer agency role',
+      populate: {
+        path: 'buyer agency',
+        select: '-location',
+      },
+    }),
+    query
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await blogQuery.modelQuery;
+  const meta = await blogQuery.countTotal();
+  return { result, meta };
+};
 
 export const DocumentService = {
   createDocumentToDB,
   getAllDocuments,
+  getAllDocumentForAdmin,
 };

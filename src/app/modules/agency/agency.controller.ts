@@ -65,7 +65,18 @@ const getAllAgency = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllAgencies = catchAsync(async (req: Request, res: Response) => {
+  const result = await AgencyService.getAllAgencies(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Agencies retrieved successfully',
+    data: result,
+  });
+});
+
 export const AgencyController = {
   updateAgencyProfile,
   getAllAgency,
+  getAllAgencies,
 };

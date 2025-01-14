@@ -25,4 +25,10 @@ router.get(
   DocumentController.getAllDocument
 );
 
+router.get(
+  '/get-document-admin',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  DocumentController.getAllDocumentForAdmin
+);
+
 export const DocumentRoutes = router;

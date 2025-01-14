@@ -3,38 +3,6 @@ import ApiError from '../../../errors/ApiError';
 import { User } from '../user/user.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
 
-// const suspendUser = async (userId: string, days: number) => {
-//   const suspensionEndDate = new Date();
-//   suspensionEndDate.setDate(suspensionEndDate.getDate() + days);
-
-//   const isUser = await User.findById(userId);
-
-//   if (!isUser) {
-//     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-//   }
-
-//   const user = await User.findByIdAndUpdate(
-//     userId,
-//     { isSuspended: true, suspensionEndDate },
-//     { new: true }
-//   );
-
-//   if (!user) {
-//     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-//   }
-
-//   const value = {
-//     receiver: userId,
-//     text: `Your account has been suspended for ${days} days.`,
-//   };
-
-//   if (user) {
-//     sendNotifications(value);
-//   }
-
-//   return user;
-// };
-
 const suspendUser = async (userId: string, days: number) => {
   const suspensionEndDate = new Date();
   suspensionEndDate.setDate(suspensionEndDate.getDate() + days);
@@ -89,50 +57,47 @@ const suspendUser = async (userId: string, days: number) => {
   return { agency, suspendedSubUsers };
 };
 
-// const reactivateUsers = async () => {
-//   const now = new Date();
-//   const users = await User.updateMany(
-//     { isSuspended: true, suspensionEndDate: { $lte: now } },
-//     { isSuspended: false, suspensionEndDate: null }
-//   );
-
-//   if (users.matchedCount === 0) {
-//     throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended users found');
-//   }
-
-//   return users;
-// };
-
-const reactivateUsers = async (userId: string) => {
+const reactivateUsers = async () => {
   const now = new Date();
 
-  // Find and reactivate the agency
-  const agency = await User.findByIdAndUpdate(
-    userId,
-    { isSuspended: false, suspensionEndDate: null },
-    { new: true }
-  );
+  // Reactivate agencies whose suspension has expired
+  const agencies = await User.find({
+    isSuspended: true,
+    suspensionEndDate: { $lte: now },
+  });
 
-  if (!agency) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Agency not found');
+  if (agencies.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended agencies found');
   }
 
-  // Find sub-users associated with the agency
-  const subUsers = await User.find({ agencis: agency._id, isSuspended: true });
+  // Reactivate each agency and its sub-users
+  for (const agency of agencies) {
+    // Reactivate the agency
+    await User.findByIdAndUpdate(
+      agency._id,
+      { isSuspended: false, suspensionEndDate: null },
+      { new: true }
+    );
 
-  // Reactivate all sub-users
-  const reactivatedSubUsers = await Promise.all(
-    subUsers.map(subUser =>
-      User.findByIdAndUpdate(
-        subUser._id,
-        { isSuspended: false, suspensionEndDate: null },
-        { new: true }
+    const subUsers = await User.find({
+      agencis: agency._id,
+      // isSuspended: true,
+      // suspensionEndDate: { $lte: now },
+    });
+
+    // Reactivate each sub-user
+    await Promise.all(
+      subUsers.map(subUser =>
+        User.findByIdAndUpdate(
+          subUser._id,
+          { isSuspended: false, suspensionEndDate: null },
+          { new: true }
+        )
       )
-    )
-  );
+    );
+  }
 
-  // Return reactivated agency and its sub-users
-  return { agency, reactivatedSubUsers };
+  return { message: 'Agencies and sub-users reactivated successfully.' };
 };
 
 const getUserStatus = async (userId: string) => {
@@ -150,9 +115,7 @@ const getUserStatus = async (userId: string) => {
 };
 
 const getAllSuspendedUsers = async () => {
-  const users = await User.find({ isSuspended: true }).populate(
-    'driver client'
-  );
+  const users = await User.find({ isSuspended: true }).populate('agency buyer');
 
   if (users.length === 0) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended users found');
@@ -160,29 +123,6 @@ const getAllSuspendedUsers = async () => {
 
   return users;
 };
-
-// const ActiveUser = async (userId: string) => {
-//   const user = await User.findByIdAndUpdate(
-//     userId,
-//     { isSuspended: false, suspensionEndDate: null },
-//     { new: true }
-//   );
-
-//   if (!user) {
-//     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-//   }
-
-//   const value = {
-//     receiver: userId,
-//     text: `Your account has been reactivated.`,
-//   };
-
-//   if (user) {
-//     sendNotifications(value);
-//   }
-
-//   return user;
-// };
 
 const ActiveUser = async (userId: string) => {
   // Reactivate the agency user

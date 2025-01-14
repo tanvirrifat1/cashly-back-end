@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { IAboutUs, IPrivacy, ITerms } from './setting.interface';
+import { IPrivacy, ITerms } from './setting.interface';
 
 // terms and condition
 const termSchema = new Schema<ITerms>(
@@ -32,19 +32,3 @@ const returnSchema = new Schema<IPrivacy>(
 );
 
 export const Privacy = model<IPrivacy>('Privacy', returnSchema);
-
-// return About
-const AboutSchema = new Schema<IAboutUs>(
-  {
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-export const About = model<IAboutUs>('About', AboutSchema);
