@@ -14,4 +14,6 @@ router.post(
   currencyController.addToCurrency
 );
 
+router.get('/get', auth(USER_ROLES.AGENCY), currencyController.getAllCurrency);
+
 export const currencyRoutes = router;

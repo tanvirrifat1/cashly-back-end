@@ -16,6 +16,19 @@ const addToCurrency = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllCurrency = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+
+  const result = await currencyService.getAllCurrency(userId, req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Currency retrived successfully',
+    data: result,
+  });
+});
+
 export const currencyController = {
   addToCurrency,
+  getAllCurrency,
 };
