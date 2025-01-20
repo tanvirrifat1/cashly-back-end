@@ -4,7 +4,7 @@ import { USER_ROLES } from '../../../enums/user';
 import { AdminController } from './admin.controller';
 import validateRequest from '../../middlewares/validateRequest';
 import { AdminValidation } from './admin.validation';
-import fileUploadHandler from '../../middlewares/fileUploadHandler';
+
 const router = express.Router();
 
 router.post(

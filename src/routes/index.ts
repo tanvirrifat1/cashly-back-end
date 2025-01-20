@@ -12,6 +12,7 @@ import { BuyerRoutes } from '../app/modules/buyer/buyer.route';
 import { DocumentRoutes } from '../app/modules/document/document.route';
 import { PermissionRoutes } from '../app/modules/permission/permission.route';
 import { SubUserRoutes } from '../app/modules/subAccount/subAccount.route';
+import { currencyRoutes } from '../app/modules/currency/currency.routes';
 
 const router = express.Router();
 
@@ -30,6 +31,7 @@ const apiRoutes = [
   { path: '/document', route: DocumentRoutes },
   { path: '/permission', route: PermissionRoutes },
   { path: '/subuser', route: SubUserRoutes },
+  { path: '/currency', route: currencyRoutes },
 ];
 
 apiRoutes.forEach(route => router.use(route.path, route.route));

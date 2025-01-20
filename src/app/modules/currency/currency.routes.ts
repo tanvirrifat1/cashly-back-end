@@ -1,0 +1,17 @@
+import express from 'express';
+import { currencyController } from './currency.controller';
+import auth from '../../middlewares/auth';
+import { USER_ROLES } from '../../../enums/user';
+import validateRequest from '../../middlewares/validateRequest';
+import { currencyValidation } from './currency.validation';
+
+const router = express.Router();
+
+router.post(
+  '/add',
+  auth(USER_ROLES.AGENCY),
+  validateRequest(currencyValidation.currencySchema),
+  currencyController.addToCurrency
+);
+
+export const currencyRoutes = router;
