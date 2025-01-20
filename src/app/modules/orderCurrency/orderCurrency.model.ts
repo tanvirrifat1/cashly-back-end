@@ -27,6 +27,10 @@ const orderSchema = new Schema<IOrderCurrency>(
       enum: ['pending', 'completed', 'cancelled'],
       default: 'pending',
     },
+    time: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true }
 );

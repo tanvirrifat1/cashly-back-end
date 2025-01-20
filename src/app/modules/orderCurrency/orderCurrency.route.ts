@@ -12,4 +12,22 @@ router.post(
   orderCurrencyController.createOrderCurrency
 );
 
+router.get(
+  '/get-all-order',
+  auth(USER_ROLES.BUYER),
+  orderCurrencyController.getAllOrder
+);
+
+router.get(
+  '/get-single-order/:id',
+  auth(USER_ROLES.BUYER),
+  orderCurrencyController.getSingleOrder
+);
+
+router.patch(
+  '/updated/:id',
+  auth(USER_ROLES.BUYER),
+  orderCurrencyController.updateOrderStatus
+);
+
 export const OrderRoutes = router;
