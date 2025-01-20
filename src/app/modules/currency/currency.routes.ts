@@ -16,4 +16,17 @@ router.post(
 
 router.get('/get', auth(USER_ROLES.AGENCY), currencyController.getAllCurrency);
 
+router.get(
+  '/get-for-buyer',
+  auth(USER_ROLES.AGENCY, USER_ROLES.BUYER),
+  currencyController.getAllCurrencyForBuyer
+);
+
+router.patch(
+  '/update/:id',
+  auth(USER_ROLES.AGENCY),
+  validateRequest(currencyValidation.CurrencyUpdate),
+  currencyController.CurrencyUpdate
+);
+
 export const currencyRoutes = router;

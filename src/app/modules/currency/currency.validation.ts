@@ -178,6 +178,23 @@ const currencySchema = z.object({
   }),
 });
 
+const CurrencyUpdate = z.object({
+  body: z.object({
+    amount: z.string().optional(),
+    currency: currencyEnum.optional(),
+    location: z.string().optional(),
+    date: z
+      .string()
+      .optional()
+      .refine(
+        val => val === undefined || !isNaN(Date.parse(val)), // Validate only if date is provided
+        { message: 'Invalid date format' }
+      )
+      .transform(val => (val ? new Date(val) : undefined)), // Transform only if date is provided
+  }),
+});
+
 export const currencyValidation = {
   currencySchema,
+  CurrencyUpdate,
 };

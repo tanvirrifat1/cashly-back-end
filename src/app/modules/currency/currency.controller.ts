@@ -28,7 +28,38 @@ const getAllCurrency = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllCurrencyForBuyer = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await currencyService.getAllCurrencyForBuyer(req.query);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Currency retrived for buyer successfully',
+      data: result,
+    });
+  }
+);
+
+const CurrencyUpdate = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+
+  const value = {
+    ...req.body,
+    userId,
+  };
+
+  const result = await currencyService.updateCurrency(req.params.id, value);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Currency updated successfully',
+    data: result,
+  });
+});
+
 export const currencyController = {
   addToCurrency,
   getAllCurrency,
+  getAllCurrencyForBuyer,
+  CurrencyUpdate,
 };

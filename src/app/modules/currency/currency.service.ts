@@ -92,7 +92,85 @@ const getAllCurrency = async (
     },
   };
 };
+const getAllCurrencyForBuyer = async (query: Record<string, unknown>) => {
+  const { page, limit, currency, amount, searchTerm, ...filterData } = query;
+  const anyConditions: any[] = [];
+
+  if (currency) {
+    anyConditions.push({ currency });
+  }
+
+  if (amount) {
+    anyConditions.push({ amount });
+  }
+
+  // Filter by additional filterData fields
+  if (Object.keys(filterData).length > 0) {
+    const filterConditions = Object.entries(filterData).map(
+      ([field, value]) => ({ [field]: value })
+    );
+    anyConditions.push({ $and: filterConditions });
+  }
+
+  // Combine all conditions
+  const whereConditions =
+    anyConditions.length > 0 ? { $and: anyConditions } : {};
+
+  // Pagination setup
+  const pages = parseInt(page as string) || 1;
+  const size = parseInt(limit as string) || 10;
+  const skip = (pages - 1) * size;
+
+  // Fetch campaigns
+  const result = await Currency.find(whereConditions)
+    .populate({
+      path: 'userId',
+      select: 'agency -_id',
+      populate: {
+        path: 'agency',
+      },
+    })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(size)
+    .lean();
+
+  const count = await Currency.countDocuments(whereConditions);
+
+  return {
+    result,
+    meta: {
+      page: pages,
+      total: count,
+    },
+  };
+};
+
+const updateCurrency = async (id: string, data: ICurrency) => {
+  const isUser = await User.findById({ _id: data.userId });
+
+  if (!isUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'User not found!');
+  }
+
+  const isExist = await Currency.findOne({
+    currency: data.currency,
+    userId: data.userId,
+  });
+
+  if (isExist) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Currency already exist!');
+  }
+
+  const result = await Currency.findByIdAndUpdate(id, data, {
+    new: true,
+  });
+  return result;
+};
+
 export const currencyService = {
   addToCurrency,
   getAllCurrency,
+  getAllCurrencyForBuyer,
+  updateCurrency,
 };
