@@ -26,9 +26,15 @@ router.get(
 );
 
 router.get(
-  '/get-document-admin',
+  '/get-document-agency',
   auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
-  DocumentController.getAllDocumentForAdmin
+  DocumentController.getAllDocumentForAgency
+);
+
+router.get(
+  '/get-document-buyer',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  DocumentController.getAllDocumentBuyer
 );
 
 export const DocumentRoutes = router;

@@ -17,6 +17,11 @@ const documentSchema = new Schema<IDocument>(
       enum: ['active', 'delete'],
       default: 'active',
     },
+    role: {
+      type: String,
+      enum: ['BUYER', 'AGENCY'],
+      required: true,
+    },
   },
   {
     timestamps: true,

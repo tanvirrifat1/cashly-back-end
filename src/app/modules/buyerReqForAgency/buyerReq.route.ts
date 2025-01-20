@@ -11,4 +11,10 @@ router.get(
   buyerReqController.getOrderRequest
 );
 
+router.get(
+  '/get-single-req/:id',
+  auth(USER_ROLES.AGENCY),
+  buyerReqController.getSingleOrderRequest
+);
+
 export const BuyerReqForAgencyRoutes = router;

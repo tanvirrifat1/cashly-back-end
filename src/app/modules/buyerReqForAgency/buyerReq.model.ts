@@ -25,7 +25,23 @@ const buyerReqSchema = new Schema<IBuyerReqForAgency>({
     type: Date,
     required: true,
   },
+  currency: {
+    type: Schema.Types.ObjectId,
+    ref: 'Currency',
+    required: true,
+  },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+    },
+    coordinates: {
+      type: [Number],
+    },
+  },
 });
+
+buyerReqSchema.index({ location: '2dsphere' });
 
 export const BuyerReqForAgency = model<IBuyerReqForAgency>(
   'BuyerReqForAgency',

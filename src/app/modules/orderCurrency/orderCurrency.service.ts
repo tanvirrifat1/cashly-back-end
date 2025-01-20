@@ -47,6 +47,8 @@ const orderCurrency = async (data: IOrderCurrency) => {
     orderId: result._id,
     status: result.status,
     time: data.time,
+    currency: data.currency,
+    location: data.location,
   });
 
   if (!createReqForAgency) {

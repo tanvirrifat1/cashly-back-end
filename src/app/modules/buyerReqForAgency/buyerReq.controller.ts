@@ -15,6 +15,17 @@ const getOrderRequest = catchAsync(async (req, res) => {
   });
 });
 
+const getSingleOrderRequest = catchAsync(async (req, res) => {
+  const result = await buyerReqService.getSingleOrderRequest(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Single Order retrived successfully',
+    data: result,
+  });
+});
+
 export const buyerReqController = {
   getOrderRequest,
+  getSingleOrderRequest,
 };

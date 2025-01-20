@@ -1,3 +1,5 @@
+import { StatusCodes } from 'http-status-codes';
+import ApiError from '../../../errors/ApiError';
 import { BuyerReqForAgency } from './buyerReq.model';
 
 const getOrderRequest = async (
@@ -9,6 +11,10 @@ const getOrderRequest = async (
 
   if (userId) {
     anyConditions.push({ agencyId: userId });
+  }
+
+  if (searchTerm) {
+    anyConditions.push({ status: { $regex: searchTerm, $options: 'i' } });
   }
 
   // Filter by additional filterData fields
@@ -32,7 +38,7 @@ const getOrderRequest = async (
   const result = await BuyerReqForAgency.find(whereConditions)
     .populate({
       path: 'buyerId',
-      select: 'buyer -_id',
+      select: 'buyer -_id time',
       populate: {
         path: 'buyer',
       },
@@ -61,6 +67,28 @@ const getOrderRequest = async (
   };
 };
 
+const getSingleOrderRequest = async (id: string) => {
+  const isExist = await BuyerReqForAgency.findById(id);
+  if (!isExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Order request not found');
+  }
+
+  const result = await BuyerReqForAgency.findById(id)
+    .populate({
+      path: 'buyerId',
+      select: 'buyer -_id',
+      populate: {
+        path: 'buyer',
+      },
+    })
+    .populate({
+      path: 'currency',
+      select: 'currency amount ',
+    });
+  return result;
+};
+
 export const buyerReqService = {
   getOrderRequest,
+  getSingleOrderRequest,
 };

@@ -40,12 +40,23 @@ const getAllDocument = catchAsync(async (req, res) => {
     data: result,
   });
 });
-const getAllDocumentForAdmin = catchAsync(async (req, res) => {
-  const result = await DocumentService.getAllDocumentForAdmin(req.query);
+
+const getAllDocumentForAgency = catchAsync(async (req, res) => {
+  const result = await DocumentService.getAllDocumentForAgency(req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Document retrived for admin successfully',
+    message: 'Document retrived for agency successfully',
+    data: result,
+  });
+});
+
+const getAllDocumentBuyer = catchAsync(async (req, res) => {
+  const result = await DocumentService.getAllDocumentForBuyer(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Document retrived for buyer successfully',
     data: result,
   });
 });
@@ -53,5 +64,6 @@ const getAllDocumentForAdmin = catchAsync(async (req, res) => {
 export const DocumentController = {
   createDocumentToDB,
   getAllDocument,
-  getAllDocumentForAdmin,
+  getAllDocumentForAgency,
+  getAllDocumentBuyer,
 };
