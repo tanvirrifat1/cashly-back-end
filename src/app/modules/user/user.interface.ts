@@ -17,9 +17,7 @@ export type IUser = {
   suspensionEndDate?: Date;
   agency?: Types.ObjectId;
   buyer?: Types.ObjectId;
-
   agencis?: Types.ObjectId;
-
   location: {
     type: { type: String; enum: ['Point']; default: 'Point' };
     coordinates: [number, number];

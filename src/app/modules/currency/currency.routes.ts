@@ -29,4 +29,10 @@ router.patch(
   currencyController.CurrencyUpdate
 );
 
+router.delete(
+  '/delete/:id',
+  auth(USER_ROLES.AGENCY),
+  currencyController.deleteCurrency
+);
+
 export const currencyRoutes = router;

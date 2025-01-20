@@ -57,9 +57,20 @@ const CurrencyUpdate = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteCurrency = catchAsync(async (req: Request, res: Response) => {
+  const result = await currencyService.deleteCurrency(req.params.id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Currency deleted successfully',
+    data: result,
+  });
+});
+
 export const currencyController = {
   addToCurrency,
   getAllCurrency,
   getAllCurrencyForBuyer,
   CurrencyUpdate,
+  deleteCurrency,
 };

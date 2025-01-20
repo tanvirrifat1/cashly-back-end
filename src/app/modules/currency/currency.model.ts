@@ -8,6 +8,7 @@ export const currencySchema = new Schema<ICurrency>(
     location: { type: String, required: true },
     date: { type: Date, required: true },
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    status: { type: String, enum: ['active', 'deleted'], default: 'active' },
   },
   { timestamps: true }
 );

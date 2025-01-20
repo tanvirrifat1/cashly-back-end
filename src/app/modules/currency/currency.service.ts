@@ -168,9 +168,15 @@ const updateCurrency = async (id: string, data: ICurrency) => {
   return result;
 };
 
+const deleteCurrency = async (id: string) => {
+  const result = await Currency.findByIdAndDelete(id, { new: true });
+  return result;
+};
+
 export const currencyService = {
   addToCurrency,
   getAllCurrency,
   getAllCurrencyForBuyer,
   updateCurrency,
+  deleteCurrency,
 };
