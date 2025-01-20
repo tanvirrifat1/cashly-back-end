@@ -45,6 +45,7 @@ const orderCurrency = async (data: IOrderCurrency) => {
     agencyId: isCurrencyExist.userId._id,
     orderId: result._id,
     status: result.status,
+    time: data.time,
   });
 
   if (!createReqForAgency) {

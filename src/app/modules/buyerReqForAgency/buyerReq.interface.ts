@@ -5,4 +5,5 @@ export type IBuyerReqForAgency = {
   agencyId: Types.ObjectId;
   orderId: Types.ObjectId;
   status: 'pending' | 'completed' | 'cancelled';
+  time: Date;
 };

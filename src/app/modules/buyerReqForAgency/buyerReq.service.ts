@@ -1,4 +1,3 @@
-import { populate } from 'dotenv';
 import { BuyerReqForAgency } from './buyerReq.model';
 
 const getOrderRequest = async (

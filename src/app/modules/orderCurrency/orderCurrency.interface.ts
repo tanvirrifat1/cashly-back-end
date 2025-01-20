@@ -8,4 +8,5 @@ export type IOrderCurrency = {
     coordinates: [number, number];
   };
   status: 'pending' | 'completed' | 'cancelled';
+  time: Date;
 };

@@ -21,6 +21,10 @@ const buyerReqSchema = new Schema<IBuyerReqForAgency>({
     type: String,
     enum: ['pending', 'completed', 'cancelled'],
   },
+  time: {
+    type: Date,
+    required: true,
+  },
 });
 
 export const BuyerReqForAgency = model<IBuyerReqForAgency>(
