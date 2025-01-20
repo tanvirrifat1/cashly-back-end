@@ -13,6 +13,7 @@ import { PermissionRoutes } from '../app/modules/permission/permission.route';
 import { SubUserRoutes } from '../app/modules/subAccount/subAccount.route';
 import { currencyRoutes } from '../app/modules/currency/currency.routes';
 import { OrderRoutes } from '../app/modules/orderCurrency/orderCurrency.route';
+import { BuyerReqForAgencyRoutes } from '../app/modules/buyerReqForAgency/buyerReq.route';
 
 const router = express.Router();
 
@@ -32,6 +33,7 @@ const apiRoutes = [
   { path: '/subuser', route: SubUserRoutes },
   { path: '/currency', route: currencyRoutes },
   { path: '/Order', route: OrderRoutes },
+  { path: '/req', route: BuyerReqForAgencyRoutes },
 ];
 
 apiRoutes.forEach(route => router.use(route.path, route.route));
