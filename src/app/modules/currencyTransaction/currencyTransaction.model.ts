@@ -18,7 +18,7 @@ const currencyTransactionSchema = new Schema<ICurrencyTransaction>(
     },
     buyerId: {
       type: Schema.Types.ObjectId,
-      ref: 'Buyer',
+      ref: 'User',
       required: true,
     },
   },

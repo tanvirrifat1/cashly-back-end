@@ -7,6 +7,7 @@ import { Currency } from '../currency/currency.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
 import { BuyerReqForAgency } from '../buyerReqForAgency/buyerReq.model';
 import mongoose from 'mongoose';
+import { CurrencyTransaction } from '../currencyTransaction/currencyTransaction.model';
 
 const orderCurrency = async (data: IOrderCurrency) => {
   const isExistUser = await User.findOne({ _id: data.user });
@@ -180,6 +181,28 @@ const updateOrderStatus = async (id: string) => {
           'Failed to update the agency request!'
         );
       }
+    }
+
+    const isCurrency = await Currency.findOne({
+      _id: updatedOrder.currency,
+    }).session(session);
+
+    // Calculate transaction amount
+    const transactionAmount = isCurrency?.amount;
+
+    // Create a currency transaction
+    const isCurrencyTransaction = await CurrencyTransaction.create({
+      amount: transactionAmount,
+      currency: isCurrency?.currency,
+      buyerId: updatedOrder.user,
+      agencyId: isCurrency?.userId,
+    });
+
+    if (!isCurrencyTransaction) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'Failed to create currency transaction!'
+      );
     }
 
     await session.commitTransaction();
