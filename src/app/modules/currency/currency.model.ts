@@ -9,6 +9,8 @@ export const currencySchema = new Schema<ICurrency>(
     date: { type: Date, required: true },
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     status: { type: String, enum: ['active', 'deleted'], default: 'active' },
+    count: { type: String },
+    rating: { type: Number },
   },
   { timestamps: true }
 );

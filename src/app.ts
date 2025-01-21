@@ -24,7 +24,7 @@ app.use(
 
 // Run every day at midnight
 cron.schedule('* * * * *', async () => {
-  logger.info('Running daily reactivation job');
+  // logger.info('Running daily reactivation job');
   await UserSuspentionService.reactivateUsers();
   logger.info('Reactivation job completed');
 });

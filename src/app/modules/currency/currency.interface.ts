@@ -7,4 +7,6 @@ export type ICurrency = {
   date: Date;
   userId: Types.ObjectId;
   status: 'active' | 'deleted';
+  rating?: number;
+  count?: string;
 };
