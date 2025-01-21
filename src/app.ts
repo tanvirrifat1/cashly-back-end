@@ -7,6 +7,7 @@ import { Morgan } from './shared/morgen';
 import cron from 'node-cron';
 import { UserSuspentionService } from './app/modules/userSuspention/userSuspention.service';
 import { logger } from './shared/logger';
+import { SubscriptionController } from './app/modules/subscription/subscription.controller';
 
 const app = express();
 
@@ -20,6 +21,13 @@ app.use(
     origin: ['*'],
     credentials: true,
   })
+);
+
+//webhook
+app.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  SubscriptionController.stripeWebhookController
 );
 
 // Run every day at midnight

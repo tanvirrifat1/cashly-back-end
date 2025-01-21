@@ -12,6 +12,8 @@ export default {
   google_maps: process.env.GOOGLE_MAPS,
   twilio_sid: process.env.TWILIO_SID,
   twilio_auth_token: process.env.TWILIO_AUTH_TOKEN,
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  webhook_secret: process.env.WEBHOOK_SECRET,
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
     jwt_expire_in: process.env.JWT_EXPIRE_IN,

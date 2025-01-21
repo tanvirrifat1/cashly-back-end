@@ -31,7 +31,9 @@ const userSchema = new Schema<IUser, UserModal>(
       type: String,
       // unique: true,
     },
-
+    subscription: {
+      type: Boolean,
+    },
     address: {
       type: String,
     },
