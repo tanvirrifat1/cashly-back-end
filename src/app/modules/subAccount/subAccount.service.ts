@@ -4,6 +4,7 @@ import ApiError from '../../../errors/ApiError';
 import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import unlinkFile from '../../../shared/unlinkFile';
+import { Subscriptation } from '../subscription/subscription.model';
 
 const createSubUserToDB = async (
   userId: string,
@@ -17,20 +18,45 @@ const createSubUserToDB = async (
     agencis: userId,
   };
 
-  const createSubUser: any = await User.create(value);
+  // Check if the user's subscription is active
+  const isUserSubs = await Subscriptation.findOne({ user: userId });
+
+  if (!isUserSubs || !isUserSubs.status) {
+    throw new ApiError(StatusCodes.FORBIDDEN, 'User subscription is inactive.');
+  }
+
+  // Retrieve the user to check their subscription type
+  const isUser = await User.findById(userId);
+
+  if (isUser?.subscription !== true) {
+    throw new ApiError(StatusCodes.FORBIDDEN, 'Subscription is inactive.');
+  }
+
+  if (isUserSubs.time === 'month') {
+    // Limit sub-users to 3 for monthly subscriptions
+    const subUserCount = await User.countDocuments({ agencis: userId });
+    if (subUserCount >= 3) {
+      throw new ApiError(
+        StatusCodes.FORBIDDEN,
+        'Monthly subscription allows only 3 sub-users.'
+      );
+    }
+  }
+  // For yearly subscription, no limit is applied
+
+  // Create the sub-user
+  const createSubUser = await User.create(value);
 
   if (!createSubUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Sub User');
   }
 
-  if (createSubUser) {
-    // Set verified to true after admin creation
-    await User.findByIdAndUpdate(
-      { _id: createSubUser._id },
-      { verified: true },
-      { new: true }
-    );
-  }
+  // Set verified to true after admin creation
+  await User.findByIdAndUpdate(
+    { _id: createSubUser._id },
+    { verified: true },
+    { new: true }
+  );
 
   return createSubUser;
 };

@@ -8,6 +8,7 @@ const router = Router();
 
 router.post(
   '/check-out',
+  auth(USER_ROLES.AGENCY),
   SubscriptionController.createCheckoutSessionController
 );
 

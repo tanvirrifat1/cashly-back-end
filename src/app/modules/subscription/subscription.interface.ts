@@ -10,4 +10,5 @@ export type ISubscription = {
   endDate: Date;
   email: string;
   amount: number;
+  time: string;
 };

@@ -31,6 +31,9 @@ const subscribtionSchema = new Schema<ISubscription>({
   amount: {
     type: Number,
   },
+  time: {
+    type: String,
+  },
 });
 
 export const Subscriptation = model('subscriptation', subscribtionSchema);

@@ -10,9 +10,6 @@ const createCheckoutSessionService = async (
   userId: string,
   packageId: string
 ) => {
-  console.log(userId);
-  console.log(packageId);
-
   const isUser = await User.findById(userId);
 
   try {

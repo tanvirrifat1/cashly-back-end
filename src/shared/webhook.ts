@@ -1,19 +1,55 @@
 import Stripe from 'stripe';
 import { stripe } from './stripe';
-
 import { Types } from 'mongoose';
 import { User } from '../app/modules/user/user.model';
 import { Subscriptation } from '../app/modules/subscription/subscription.model';
 
+// const handleCheckoutSessionCompleted = async (
+//   session: Stripe.Checkout.Session
+// ) => {
+//   const { amount_total, metadata, payment_intent } = session;
+//   const userId = metadata?.userId as string;
+//   const packageId = metadata?.packageId as string;
+//   const products = JSON.parse(metadata?.products || '[]');
+//   const email = session.customer_email || '';
+
+//   const amountTotal = (amount_total ?? 0) / 100;
+
+//   const subscription = await stripe.subscriptions.retrieve(
+//     session.subscription as string
+//   );
+
+//   const startDate = new Date(subscription.start_date * 1000);
+//   const endDate = new Date(subscription.current_period_end * 1000);
+
+//   const interval = subscription.items.data[0]?.plan?.interval as string;
+
+//   const paymentRecord = new Subscriptation({
+//     amount: amountTotal,
+//     user: new Types.ObjectId(userId),
+//     package: new Types.ObjectId(packageId),
+//     products,
+//     email,
+//     transactionId: payment_intent,
+//     startDate,
+//     endDate,
+//     status: 'Pending',
+//     subscriptionId: session.subscription,
+//     stripeCustomerId: session.customer as string,
+//     time: interval,
+//   });
+
+//   await paymentRecord.save();
+// };
+
 const handleCheckoutSessionCompleted = async (
   session: Stripe.Checkout.Session
 ) => {
-  const { amount_total, metadata, payment_intent } = session;
+  const { amount_total, metadata, payment_intent, payment_status } = session;
   const userId = metadata?.userId as string;
   const packageId = metadata?.packageId as string;
   const products = JSON.parse(metadata?.products || '[]');
   const email = session.customer_email || '';
-
   const amountTotal = (amount_total ?? 0) / 100;
 
   const subscription = await stripe.subscriptions.retrieve(
@@ -22,6 +58,10 @@ const handleCheckoutSessionCompleted = async (
 
   const startDate = new Date(subscription.start_date * 1000);
   const endDate = new Date(subscription.current_period_end * 1000);
+
+  const interval = subscription.items.data[0]?.plan?.interval as string;
+
+  const status = payment_status === 'paid' ? 'Completed' : 'Pending';
 
   const paymentRecord = new Subscriptation({
     amount: amountTotal,
@@ -32,9 +72,10 @@ const handleCheckoutSessionCompleted = async (
     transactionId: payment_intent,
     startDate,
     endDate,
-    status: 'Pending',
+    status,
     subscriptionId: session.subscription,
     stripeCustomerId: session.customer as string,
+    time: interval,
   });
 
   await paymentRecord.save();

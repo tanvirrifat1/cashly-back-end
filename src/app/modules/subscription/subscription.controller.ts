@@ -4,7 +4,9 @@ import { stripe } from '../../../shared/stripe';
 import config from '../../../config';
 
 const createCheckoutSessionController = async (req: Request, res: Response) => {
-  const { userId, packageId } = req.body;
+  const userId = req.user.id;
+
+  const { packageId } = req.body;
 
   try {
     const sessionUrl = await SubscriptationService.createCheckoutSessionService(
