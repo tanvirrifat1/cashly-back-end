@@ -205,6 +205,15 @@ const updateOrderStatus = async (id: string) => {
       );
     }
 
+    const value = {
+      text: 'Your order has been completed',
+      receiver: isCurrency?.userId,
+    };
+
+    if (updatedOrder?.status === 'completed') {
+      sendNotifications(value);
+    }
+
     await session.commitTransaction();
     session.endSession();
 

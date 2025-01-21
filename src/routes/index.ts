@@ -15,6 +15,7 @@ import { currencyRoutes } from '../app/modules/currency/currency.routes';
 import { OrderRoutes } from '../app/modules/orderCurrency/orderCurrency.route';
 import { BuyerReqForAgencyRoutes } from '../app/modules/buyerReqForAgency/buyerReq.route';
 import { ReviewRoutes } from '../app/modules/review/review.route';
+import { CurrencyTransactionRoutes } from '../app/modules/currencyTransaction/currencyTransaction.routes';
 
 const router = express.Router();
 
@@ -36,6 +37,7 @@ const apiRoutes = [
   { path: '/Order', route: OrderRoutes },
   { path: '/req', route: BuyerReqForAgencyRoutes },
   { path: '/review', route: ReviewRoutes },
+  { path: '/currency-transaction', route: CurrencyTransactionRoutes },
 ];
 
 apiRoutes.forEach(route => router.use(route.path, route.route));
