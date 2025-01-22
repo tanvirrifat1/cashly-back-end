@@ -16,6 +16,7 @@ import { User } from '../user/user.model';
 import { ResetToken } from '../resetToken/resetToken.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
 import { twilioClient } from '../../../shared/mesg.send';
+import { USER_ROLES } from '../../../enums/user';
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
@@ -44,6 +45,24 @@ const loginUserFromDB = async (payload: ILoginData) => {
       StatusCodes.BAD_REQUEST,
       'You don’t have permission to access this content.It looks like your account has been deactivated.'
     );
+  }
+
+  if (isExistUser.role === USER_ROLES.SUB_USER) {
+    const agency = await User.findOne({ _id: isExistUser.agencis });
+    if (!agency) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'Associated agency not found'
+      );
+    }
+
+    // Check if the agency's subscription is active
+    if (!agency.subscription === true) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'Your agency’s subscription is inactive. Please contact the agency admin.'
+      );
+    }
   }
 
   //check login status
@@ -82,8 +101,6 @@ const loginUserFromDB = async (payload: ILoginData) => {
 
 const forgetPasswordToDB = async (email: string) => {
   const isExistUser = await User.isExistUserByEmail(email);
-
-  console.log(isExistUser, 'isExistUser');
 
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
