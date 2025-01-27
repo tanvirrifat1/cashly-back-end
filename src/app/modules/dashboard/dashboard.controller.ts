@@ -13,6 +13,17 @@ const totalStatistics = catchAsync(async (req, res) => {
   });
 });
 
+const getEarningChartData = catchAsync(async (req, res) => {
+  const result = await DashboardService.getEarningChartData();
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Dashboard earning chart retrived successfully',
+    data: result,
+  });
+});
+
 export const DashboardController = {
   totalStatistics,
+  getEarningChartData,
 };
