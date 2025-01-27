@@ -11,4 +11,10 @@ router.get(
   currencyTransactionController.getAllCurrencyTransactions
 );
 
+router.get(
+  '/get-transactions',
+  auth(USER_ROLES.AGENCY),
+  currencyTransactionController.getTransaction
+);
+
 export const CurrencyTransactionRoutes = router;

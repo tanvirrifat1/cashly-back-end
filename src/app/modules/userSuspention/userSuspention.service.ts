@@ -79,8 +79,6 @@ const reactivateUsers = async () => {
     throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended agencies found');
   }
 
-  console.log(agencies);
-
   // Reactivate each agency and its sub-users
   for (const agency of agencies) {
     // Reactivate the agency

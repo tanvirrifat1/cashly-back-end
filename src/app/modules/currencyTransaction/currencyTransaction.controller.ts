@@ -17,6 +17,22 @@ const getAllCurrencyTransactions = catchAsync(async (req, res) => {
   });
 });
 
+const getTransaction = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+
+  const result = await currencyTransactionService.getTransaction(
+    userId,
+    req.query
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Currency transactions retrived successfully',
+    data: result,
+  });
+});
+
 export const currencyTransactionController = {
   getAllCurrencyTransactions,
+  getTransaction,
 };
