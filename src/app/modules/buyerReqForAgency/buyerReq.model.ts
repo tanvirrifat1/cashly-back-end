@@ -19,7 +19,7 @@ const buyerReqSchema = new Schema<IBuyerReqForAgency>({
   },
   status: {
     type: String,
-    enum: ['pending', 'completed', 'cancelled'],
+    enum: ['pending', 'completed', 'cancelled', 'accepted'],
   },
   time: {
     type: Date,

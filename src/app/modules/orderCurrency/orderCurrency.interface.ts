@@ -7,6 +7,6 @@ export type IOrderCurrency = {
     type: { type: String; enum: ['Point']; default: 'Point' };
     coordinates: [number, number];
   };
-  status: 'pending' | 'completed' | 'cancelled';
+  status: 'pending' | 'completed' | 'cancelled' | 'accepted';
   time: Date;
 };

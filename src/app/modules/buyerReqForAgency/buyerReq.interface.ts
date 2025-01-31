@@ -5,7 +5,7 @@ export type IBuyerReqForAgency = {
   agencyId: Types.ObjectId;
   orderId: Types.ObjectId;
   currency: Types.ObjectId;
-  status: 'pending' | 'completed' | 'cancelled';
+  status: 'pending' | 'completed' | 'cancelled' | 'accepted';
   time: Date;
   location: {
     type: { type: String; enum: ['Point']; default: 'Point' };

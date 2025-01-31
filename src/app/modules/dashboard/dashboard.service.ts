@@ -123,7 +123,7 @@ const getEarningChartData = async () => {
       },
     },
   ]);
-  console.log(result);
+
   return result;
 };
 

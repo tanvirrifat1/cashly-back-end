@@ -15,7 +15,7 @@ const orderSchema = new Schema<IOrderCurrency>(
     },
     status: {
       type: String,
-      enum: ['pending', 'completed', 'cancelled'],
+      enum: ['pending', 'completed', 'cancelled', 'accepted'],
       default: 'pending',
     },
     time: {

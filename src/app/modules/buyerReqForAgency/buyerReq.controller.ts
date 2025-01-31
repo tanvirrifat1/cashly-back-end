@@ -25,7 +25,18 @@ const getSingleOrderRequest = catchAsync(async (req, res) => {
   });
 });
 
+const updateStatus = catchAsync(async (req, res) => {
+  const result = await buyerReqService.updateStatus(req.params.id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Order updated successfully',
+    data: result,
+  });
+});
+
 export const buyerReqController = {
   getOrderRequest,
   getSingleOrderRequest,
+  updateStatus,
 };

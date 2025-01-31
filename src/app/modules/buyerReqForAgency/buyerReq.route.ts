@@ -17,4 +17,10 @@ router.get(
   buyerReqController.getSingleOrderRequest
 );
 
+router.patch(
+  '/status/:id',
+  auth(USER_ROLES.AGENCY),
+  buyerReqController.updateStatus
+);
+
 export const BuyerReqForAgencyRoutes = router;

@@ -1,6 +1,9 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { BuyerReqForAgency } from './buyerReq.model';
+import { IBuyerReqForAgency } from './buyerReq.interface';
+import { Order } from '../orderCurrency/orderCurrency.model';
+import mongoose from 'mongoose';
 
 const getOrderRequest = async (
   userId: string,
@@ -88,7 +91,58 @@ const getSingleOrderRequest = async (id: string) => {
   return result;
 };
 
+const updateStatus = async (id: string, payload: IBuyerReqForAgency) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const isExist = await BuyerReqForAgency.findById(id).session(session);
+    if (!isExist) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Order request not found');
+    }
+
+    const result = await BuyerReqForAgency.findByIdAndUpdate(
+      id,
+      { status: payload.status },
+      { new: true, session }
+    );
+
+    if (!result) {
+      throw new ApiError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Failed to update BuyerReqForAgency status'
+      );
+    }
+
+    const isOrder = await Order.findById(result.orderId).session(session);
+
+    if (isOrder) {
+      const updateOrderStatus = await Order.findByIdAndUpdate(
+        isOrder._id,
+        { status: payload.status },
+        { new: true, session }
+      );
+
+      if (!updateOrderStatus) {
+        throw new ApiError(
+          StatusCodes.INTERNAL_SERVER_ERROR,
+          'Failed to update Order status'
+        );
+      }
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 export const buyerReqService = {
   getOrderRequest,
   getSingleOrderRequest,
+  updateStatus,
 };

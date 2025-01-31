@@ -79,13 +79,20 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
     const otp = generateOTP();
     const authentication = {
       oneTimeCode: otp,
-      expireAt: new Date(Date.now() + 5 * 60000), // OTP valid for 3 minutes
+      expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
     };
 
+    // await twilioClient.messages.create({
+    //   body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: user.phone || payload.phone,
+    // });
+
     await twilioClient.messages.create({
-      body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: user.phone || payload.phone,
+      from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
+      contentSid: process.env.TWILIO_CONTACT_SID,
+      contentVariables: `{"1":"${otp}","2":"5"}`,
+      to: `whatsapp:${user.phone || payload.phone}`,
     });
 
     // Update user with authentication details
@@ -179,13 +186,20 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
     const otp = generateOTP();
     const authentication = {
       oneTimeCode: otp,
-      expireAt: new Date(Date.now() + 5 * 60000), // OTP valid for 3 minutes
+      expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
     };
 
+    // await twilioClient.messages.create({
+    //   body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: user.phone || payload.phone,
+    // });
+
     await twilioClient.messages.create({
-      body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: user.phone || payload.phone,
+      from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
+      contentSid: process.env.TWILIO_CONTACT_SID,
+      contentVariables: `{"1":"${otp}","2":"5"}`,
+      to: `whatsapp:${user.phone || payload.phone}`,
     });
 
     // Update user with authentication details

@@ -225,8 +225,6 @@ const updateOrderStatus = async (id: string) => {
   }
 };
 
-export default updateOrderStatus;
-
 export const orderCurrencyService = {
   orderCurrency,
   getAllOrder,
