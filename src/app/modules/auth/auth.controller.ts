@@ -8,7 +8,7 @@ import config from '../../../config';
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
   const { ...verifyData } = req.body;
   const result = await AuthService.verifyEmailToDB(verifyData);
-  console.log(result);
+
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
