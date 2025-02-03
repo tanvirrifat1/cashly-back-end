@@ -59,7 +59,13 @@ const getTransaction = async (
 
   // Fetch campaigns
   const result = await CurrencyTransaction.find(whereConditions)
-
+    .populate({
+      path: 'agencyId',
+      select: 'agency',
+      populate: {
+        path: 'agency',
+      },
+    })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(size)

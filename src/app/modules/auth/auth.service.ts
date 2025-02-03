@@ -165,14 +165,14 @@ const loginUserFromDB = async (payload: ILoginData) => {
   const accessToken = jwtHelper.createToken(
     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
     config.jwt.jwt_secret as Secret,
-    '7d'
+    '30d'
   );
 
   // Create refresh token
   const refreshToken = jwtHelper.createToken(
     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
     config.jwt.jwtRefreshSecret as Secret,
-    '15d'
+    '60d'
   );
 
   // Remove sensitive data before sending response

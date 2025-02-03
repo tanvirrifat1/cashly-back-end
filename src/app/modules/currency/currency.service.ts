@@ -170,6 +170,9 @@ const updateCurrency = async (id: string, data: ICurrency) => {
 
 const deleteCurrency = async (id: string) => {
   const isExist = await Currency.findById(id);
+
+  console.log(isExist);
+
   if (!isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Currency not found!');
   }
