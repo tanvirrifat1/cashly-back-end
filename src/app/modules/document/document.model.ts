@@ -12,6 +12,9 @@ const documentSchema = new Schema<IDocument>(
       ref: 'User',
       required: true,
     },
+    document: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ['active', 'delete'],

@@ -7,16 +7,18 @@ import { getFilePathMultiple } from '../../../shared/getFilePath';
 const createDocumentToDB = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
-  console.log(userId);
-
   const value = {
     ...req.body,
   };
 
   let image = getFilePathMultiple(req.files, 'image', 'image');
+  let document = getFilePathMultiple(req.files, 'doc', 'doc');
 
   if (image && image.length > 0) {
     value.image = image;
+  }
+  if (document && document.length > 0) {
+    value.document = document[0];
   }
 
   const result = await DocumentService.createDocumentToDB(userId, value);

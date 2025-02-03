@@ -4,6 +4,7 @@ import { BuyerReqForAgency } from './buyerReq.model';
 import { IBuyerReqForAgency } from './buyerReq.interface';
 import { Order } from '../orderCurrency/orderCurrency.model';
 import mongoose from 'mongoose';
+import { sendNotifications } from '../../../helpers/notificationHelper';
 
 const getOrderRequest = async (
   userId: string,
@@ -130,6 +131,13 @@ const updateStatus = async (id: string, payload: IBuyerReqForAgency) => {
         );
       }
     }
+
+    const value = {
+      text: `Your order request has been ${payload.status}`,
+      receiver: result.buyerId,
+    };
+
+    await sendNotifications(value);
 
     await session.commitTransaction();
     session.endSession();
