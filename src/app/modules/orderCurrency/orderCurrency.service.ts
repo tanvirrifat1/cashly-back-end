@@ -149,6 +149,10 @@ const updateOrderStatus = async (id: string) => {
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Order not found!');
     }
 
+    if (invite?.status !== 'accepted') {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Order not accepted yet!');
+    }
+
     // Update the order status to 'completed'
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
