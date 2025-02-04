@@ -17,4 +17,10 @@ router.get(
   DashboardController.getEarningChartData
 );
 
+router.get(
+  '/recent-user',
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
+  DashboardController.getRecentUsers
+);
+
 export const DashboardRoutes = router;

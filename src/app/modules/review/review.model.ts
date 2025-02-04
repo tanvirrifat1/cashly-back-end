@@ -4,9 +4,9 @@ import { IReview } from './review.interface';
 
 const reviewSchema = new Schema<IReview>(
   {
-    currency: {
+    agency: {
       type: Schema.Types.ObjectId,
-      ref: 'Currency',
+      ref: 'Agency',
     },
     user: {
       type: Schema.Types.ObjectId,

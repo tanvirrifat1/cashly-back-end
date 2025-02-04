@@ -48,6 +48,12 @@ const agencySchema = new Schema<IAgency>({
     enum: ['active', 'suspended', 'deleted'],
     default: 'active',
   },
+  count: {
+    type: String,
+  },
+  rating: {
+    type: Number,
+  },
 });
 
 agencySchema.index({ location: '2dsphere' });

@@ -25,6 +25,7 @@ router.get(
   AgencyController.getAllAgencies
 );
 
+router.get('/get-all-agency-best', AgencyController.getAllAgenciesBest);
 router.get('/get-all-agency', AgencyController.getAllAgency);
 
 export const AgencyRoutes = router;

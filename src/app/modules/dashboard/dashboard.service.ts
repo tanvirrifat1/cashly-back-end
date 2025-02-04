@@ -1,10 +1,12 @@
 import { USER_ROLES } from '../../../enums/user';
 import { months } from '../../../helpers/month';
+import { Agency } from '../agency/agency.model';
+import { Buyer } from '../buyer/buyer.model';
 import { Subscriptation } from '../subscription/subscription.model';
 import { User } from '../user/user.model';
 
 const totalStatistics = async () => {
-  const [totalEarnings, totalUsers, totalSubscriptation] = await Promise.all([
+  const [totalRevenue, totalBuyer, totalAgencies] = await Promise.all([
     Subscriptation.aggregate([
       { $match: { status: 'active' } },
       {
@@ -15,27 +17,14 @@ const totalStatistics = async () => {
       },
     ]).then(result => (result.length > 0 ? result[0].totalAmount : 0)),
 
-    // Total active users
-    User.countDocuments({
-      role: {
-        $in: [
-          USER_ROLES.AGENCY,
-          USER_ROLES.BUYER,
-          USER_ROLES.SUB_USER,
-          USER_ROLES.ADMIN,
-        ],
-      },
-      status: 'active',
-    }),
-
-    // Total active products
-    Subscriptation.countDocuments({ status: 'active' }),
+    Buyer.countDocuments({ status: 'active' }),
+    Agency.countDocuments({ status: 'active' }),
   ]);
 
   return {
-    totalEarnings,
-    totalUsers,
-    totalSubscriptation,
+    totalRevenue, // This is the total subscription amount
+    totalBuyer,
+    totalAgencies,
   };
 };
 
@@ -127,7 +116,19 @@ const getEarningChartData = async () => {
   return result;
 };
 
+const getRecentUsers = async () => {
+  const result = await User.find({
+    role: { $in: [USER_ROLES.BUYER, USER_ROLES.AGENCY] },
+  })
+    .populate('buyer agencis')
+    .sort({ createdAt: -1 })
+    .limit(5);
+
+  return result;
+};
+
 export const DashboardService = {
   totalStatistics,
   getEarningChartData,
+  getRecentUsers,
 };

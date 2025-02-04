@@ -23,7 +23,18 @@ const getEarningChartData = catchAsync(async (req, res) => {
   });
 });
 
+const getRecentUsers = catchAsync(async (req, res) => {
+  const result = await DashboardService.getRecentUsers();
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Recent users retrived successfully',
+    data: result,
+  });
+});
+
 export const DashboardController = {
   totalStatistics,
   getEarningChartData,
+  getRecentUsers,
 };

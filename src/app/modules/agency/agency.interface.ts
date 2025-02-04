@@ -12,4 +12,6 @@ export type IAgency = {
     type: { type: String; enum: ['Point']; default: 'Point' };
     coordinates: [number, number];
   };
+  rating?: number;
+  count?: string;
 };
