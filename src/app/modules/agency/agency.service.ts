@@ -5,6 +5,7 @@ import ApiError from '../../../errors/ApiError';
 import unlinkFile from '../../../shared/unlinkFile';
 import { User } from '../user/user.model';
 import { USER_ROLES } from '../../../enums/user';
+import { Currency } from '../currency/currency.model';
 
 const updateAgencyProfile = async (userId: string, value: IAgency) => {
   const isUser = await User.findById(userId);
@@ -108,6 +109,39 @@ const getAllAgencies = async (query: Record<string, unknown>) => {
     },
   };
 };
+// const getAllAgenciesBest = async (query: Record<string, unknown>) => {
+//   const { page, limit } = query;
+//   const pages = parseInt(page as string) || 1;
+//   const size = parseInt(limit as string) || 10;
+//   const skip = (pages - 1) * size;
+
+//   // Fetch agencies
+//   const result = await User.find({ role: USER_ROLES.AGENCY })
+//     .populate('agency')
+//     .sort({ createdAt: -1 }) // Sort initially by creation date
+//     .lean();
+
+//   // Sort manually by rating (descending)
+//   const sortedAgencies = result?.sort((a: any, b: any) => {
+//     const ratingA = a.agency?.rating || 0;
+//     const ratingB = b.agency?.rating || 0;
+//     return ratingB - ratingA;
+//   });
+
+//   // Paginate after sorting
+//   const paginatedAgencies = sortedAgencies.slice(skip, skip + size);
+
+//   const count = await User.countDocuments({ role: USER_ROLES.AGENCY });
+
+//   return {
+//     result: paginatedAgencies,
+//     meta: {
+//       page: pages,
+//       total: count,
+//     },
+//   };
+// };
+
 const getAllAgenciesBest = async (query: Record<string, unknown>) => {
   const { page, limit } = query;
   const pages = parseInt(page as string) || 1;
@@ -115,22 +149,29 @@ const getAllAgenciesBest = async (query: Record<string, unknown>) => {
   const skip = (pages - 1) * size;
 
   // Fetch agencies
-  const result = await User.find({ role: USER_ROLES.AGENCY })
-    .populate('agency')
+  const result = await Currency.find()
+    .populate({
+      path: 'userId',
+      select: 'agency',
+      populate: {
+        path: 'agency',
+      },
+    })
     .sort({ createdAt: -1 }) // Sort initially by creation date
     .lean();
 
   // Sort manually by rating (descending)
   const sortedAgencies = result?.sort((a: any, b: any) => {
-    const ratingA = a.agency?.rating || 0;
-    const ratingB = b.agency?.rating || 0;
+    const ratingA = a.userId?.agency?.rating ?? 0; // Ensure proper access
+    const ratingB = b.userId?.agency?.rating ?? 0;
+
     return ratingB - ratingA;
   });
 
   // Paginate after sorting
   const paginatedAgencies = sortedAgencies.slice(skip, skip + size);
 
-  const count = await User.countDocuments({ role: USER_ROLES.AGENCY });
+  const count = await Currency.countDocuments();
 
   return {
     result: paginatedAgencies,
