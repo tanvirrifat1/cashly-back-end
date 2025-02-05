@@ -24,7 +24,7 @@ const getAllAgency = catchAsync(async (req, res) => {
 });
 
 const updateStatus = catchAsync(async (req, res) => {
-  const result = await PermissionService.updateStatus(req.params.id);
+  const result = await PermissionService.updateStatus(req.params.id, req.body);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

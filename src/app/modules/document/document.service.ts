@@ -51,6 +51,7 @@ const getAllDocuments = async (query: Record<string, unknown>, id: string) => {
   const meta = await blogQuery.countTotal();
   return { result, meta };
 };
+
 const getAllDocumentForAgency = async (query: Record<string, unknown>) => {
   const blogQuery = new QueryBuilder(
     Document.find({ role: USER_ROLES.AGENCY }).populate({

@@ -9,7 +9,7 @@ export type IUser = {
   address: string;
   password: string;
   status: 'active' | 'suspended' | 'deleted';
-  loginStatus: 'pending' | 'approved';
+  loginStatus: 'pending' | 'approved' | 'cancel';
   verified: boolean;
   phone: string;
   image: string;
