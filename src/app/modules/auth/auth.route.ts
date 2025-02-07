@@ -42,7 +42,12 @@ router.delete(
 
 router.post(
   '/change-password',
-  auth(USER_ROLES.ADMIN, USER_ROLES.AGENCY, USER_ROLES.BUYER),
+  auth(
+    USER_ROLES.ADMIN,
+    USER_ROLES.AGENCY,
+    USER_ROLES.BUYER,
+    USER_ROLES.SUPER_ADMIN
+  ),
   validateRequest(AuthValidation.createChangePasswordZodSchema),
   AuthController.changePassword
 );

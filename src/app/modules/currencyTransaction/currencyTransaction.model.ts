@@ -21,6 +21,11 @@ const currencyTransactionSchema = new Schema<ICurrencyTransaction>(
       ref: 'User',
       required: true,
     },
+
+    status: {
+      type: String,
+      enum: ['pending', 'completed', 'cancelled', 'accepted'],
+    },
   },
   {
     timestamps: true,

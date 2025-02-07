@@ -36,9 +36,9 @@ const orderCurrency = async (data: IOrderCurrency) => {
     currency: data.currency,
   });
 
-  if (isOrder) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Order already exist!');
-  }
+  // if (isOrder) {
+  //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Order already exist!');
+  // }
 
   const result = await Order.create(data);
 
@@ -139,7 +139,7 @@ const getSingleOrder = async (orderId: string) => {
   return result;
 };
 
-const updateOrderStatus = async (id: string) => {
+const updateOrderStatus = async (id: string, payload: IOrderCurrency) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -156,7 +156,7 @@ const updateOrderStatus = async (id: string) => {
     // Update the order status to 'completed'
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
-      { $set: { status: 'completed' } },
+      { $set: { status: payload.status } },
       { new: true, session }
     );
 
@@ -200,6 +200,7 @@ const updateOrderStatus = async (id: string) => {
       currency: isCurrency?.currency,
       buyerId: updatedOrder.user,
       agencyId: isCurrency?.userId,
+      status: updatedOrder.status,
     });
 
     if (!isCurrencyTransaction) {

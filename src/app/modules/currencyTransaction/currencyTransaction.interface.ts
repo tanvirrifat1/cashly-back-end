@@ -5,4 +5,5 @@ export type ICurrencyTransaction = {
   currency: string;
   agencyId: Types.ObjectId;
   buyerId: Types.ObjectId;
+  status: 'pending' | 'completed' | 'cancelled' | 'accepted';
 };

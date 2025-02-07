@@ -46,7 +46,10 @@ const getSingleOrder = catchAsync(async (req, res) => {
 });
 
 const updateOrderStatus = catchAsync(async (req, res) => {
-  const result = await orderCurrencyService.updateOrderStatus(req.params.id);
+  const result = await orderCurrencyService.updateOrderStatus(
+    req.params.id,
+    req.body
+  );
 
   sendResponse(res, {
     success: true,
