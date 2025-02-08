@@ -64,7 +64,7 @@ const sendMesg = catchAsync(async (req: Request, res: Response) => {
 const getAllMessages = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user.id;
 
-  const result = await MessageService.getAllMessages(userId);
+  const result = await MessageService.getAllMessages(userId, req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
