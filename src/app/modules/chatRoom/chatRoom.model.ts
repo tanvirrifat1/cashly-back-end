@@ -6,6 +6,10 @@ const roomSchema = new Schema<IChatRoom>(
     participants: [{ type: Types.ObjectId, ref: 'User', required: true }],
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
     receiverId: { type: Schema.Types.ObjectId, ref: 'User' },
+    unreadCount: {
+      type: Number,
+      default: 0,
+    },
   },
 
   { timestamps: true }

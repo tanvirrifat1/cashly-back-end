@@ -32,8 +32,6 @@ const getOrCreateRoom = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllInboxs = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.user.id);
-
   const result = await ChatRoomService.getAllInboxs(req.user.id, req.query);
   sendResponse(res, {
     success: true,

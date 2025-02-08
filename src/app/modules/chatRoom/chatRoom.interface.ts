@@ -4,4 +4,5 @@ export type IChatRoom = {
   participants: Types.ObjectId[];
   userId: Types.ObjectId;
   receiverId: Types.ObjectId;
+  unreadCount: number;
 };

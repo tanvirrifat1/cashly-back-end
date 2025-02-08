@@ -1,3 +1,4 @@
+import { JwtPayload } from 'jsonwebtoken';
 import { Room } from './chatRoom.model';
 
 const getAllInboxs = async (id: string, query: Record<string, unknown>) => {

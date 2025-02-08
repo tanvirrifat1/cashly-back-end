@@ -288,7 +288,7 @@ const verifyEmailToDB = async (payload: IVerifyEmail) => {
     '60d' // Adjust expiration as needed
   );
 
-  return { message, accessToken, refreshToken, user };
+  return { message, data, accessToken, refreshToken, user };
 };
 
 //forget password
