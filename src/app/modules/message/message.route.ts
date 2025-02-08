@@ -8,13 +8,23 @@ const router = express.Router();
 
 router.post(
   '/send-message/:id',
-  auth(USER_ROLES.BUYER, USER_ROLES.AGENCY),
+  auth(
+    USER_ROLES.BUYER,
+    USER_ROLES.AGENCY,
+    USER_ROLES.ADMIN,
+    USER_ROLES.SUPER_ADMIN
+  ),
   MessageController.sendMesg
 );
 
 router.get(
-  '/get-message',
-  auth(USER_ROLES.BUYER, USER_ROLES.AGENCY),
+  '/get-message/:id',
+  auth(
+    USER_ROLES.BUYER,
+    USER_ROLES.AGENCY,
+    USER_ROLES.ADMIN,
+    USER_ROLES.SUPER_ADMIN
+  ),
   MessageController.getAllMessages
 );
 

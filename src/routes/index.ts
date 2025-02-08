@@ -19,6 +19,7 @@ import { CurrencyTransactionRoutes } from '../app/modules/currencyTransaction/cu
 import { PackageRoutes } from '../app/modules/package/package.route';
 import { SubscriptionRoutessss } from '../app/modules/subscription/subscription.route';
 import { DashboardRoutes } from '../app/modules/dashboard/dashboard.route';
+import { InboxRoutes } from '../app/modules/chatRoom/chatRoom.route';
 
 const router = express.Router();
 
@@ -33,6 +34,7 @@ const apiRoutes = [
   { path: '/agency', route: AgencyRoutes },
   { path: '/buyer', route: BuyerRoutes },
   { path: '/msg', route: MessageRoutes },
+  { path: '/inbox', route: InboxRoutes },
   { path: '/document', route: DocumentRoutes },
   { path: '/permission', route: PermissionRoutes },
   { path: '/subuser', route: SubUserRoutes },

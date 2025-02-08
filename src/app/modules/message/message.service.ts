@@ -11,31 +11,16 @@ const getAllMessages = async (id: string, query: Record<string, unknown>) => {
 
   // Fetch messages
   const messages = await Message.find({
-    $or: [{ senderId: id }, { receiverId: id }],
+    roomId: id,
   })
-    .populate({
-      path: 'senderId',
-      select: 'agency',
-      populate: {
-        path: 'agency',
-        select: 'email image',
-      },
-    })
-    .populate({
-      path: 'receiverId',
-      select: 'buyer',
-      populate: {
-        path: 'buyer',
-        select: 'email image',
-      },
-    })
+
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(size)
     .lean();
 
   const count = await Message.countDocuments({
-    $or: [{ senderId: id }, { receiverId: id }],
+    roomId: id,
   });
 
   return {
