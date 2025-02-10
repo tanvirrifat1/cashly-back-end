@@ -4,7 +4,7 @@ import sendResponse from '../../../shared/sendResponse';
 import { PermissionService } from './permission.service';
 
 const getAllBuyer = catchAsync(async (req, res) => {
-  const result = await PermissionService.getAllBuyer();
+  const result = await PermissionService.getAllBuyer(req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -14,7 +14,7 @@ const getAllBuyer = catchAsync(async (req, res) => {
 });
 
 const getAllAgency = catchAsync(async (req, res) => {
-  const result = await PermissionService.getAllAgency();
+  const result = await PermissionService.getAllAgency(req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

@@ -133,18 +133,20 @@ const sendMesg = catchAsync(async (req: Request, res: Response) => {
       unreadCount: 1,
     });
   } else {
-    await Room.updateOne(
-      { _id: room._id },
-      { $inc: { unreadCount: 1 } } // Increment count
-    );
+    // await Room.updateOne({ _id: room._id }, { $inc: { unreadCount: 1 } });
   }
 
-  const newMessage = await Message.create({
+  const value = {
     roomId: room._id,
-    senderId,
-    receiverId,
-    message,
-  });
+    text: `create a new message`,
+  };
+
+  // const newMessage = await Message.create({
+  //   roomId: room._id,
+  //   senderId,
+  //   receiverId,
+  //   message,
+  // });
 
   const receiverSocketId = getRecieverSocketId(receiverId);
   if (receiverSocketId) {
@@ -156,7 +158,7 @@ const sendMesg = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: 200,
     message: 'Message sent successfully',
-    data: newMessage,
+    data: value,
   });
 });
 

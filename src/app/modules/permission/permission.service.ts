@@ -5,29 +5,75 @@ import { User } from '../user/user.model';
 import { twilioClient } from '../../../shared/mesg.send';
 import { IUser } from '../user/user.interface';
 
-const getAllBuyer = async () => {
+const getAllBuyer = async (query: Record<string, unknown>) => {
+  const { page, limit } = query;
+
+  // Apply filter conditions
+
+  const pages = parseInt(page as string) || 1;
+  const size = parseInt(limit as string) || 10;
+  const skip = (pages - 1) * size;
+
+  // Set default sort order to show new data first
+
   const result = await User.find({
+    role: USER_ROLES.BUYER,
+    loginStatus: 'pending',
+  })
+
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(size)
+    .lean();
+  const total = await User.countDocuments({
     role: USER_ROLES.BUYER,
     loginStatus: 'pending',
   });
 
-  if (!result) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No buyer found!');
-  }
-
-  return result;
+  const data: any = {
+    result,
+    meta: {
+      page: pages,
+      limit: size,
+      total,
+    },
+  };
+  return data;
 };
-const getAllAgency = async () => {
+const getAllAgency = async (query: Record<string, unknown>) => {
+  const { page, limit } = query;
+
+  // Apply filter conditions
+
+  const pages = parseInt(page as string) || 1;
+  const size = parseInt(limit as string) || 10;
+  const skip = (pages - 1) * size;
+
+  // Set default sort order to show new data first
+
   const result = await User.find({
+    role: USER_ROLES.AGENCY,
+    loginStatus: 'pending',
+  })
+
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(size)
+    .lean();
+  const total = await User.countDocuments({
     role: USER_ROLES.AGENCY,
     loginStatus: 'pending',
   });
 
-  if (!result) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No agency found!');
-  }
-
-  return result;
+  const data: any = {
+    result,
+    meta: {
+      page: pages,
+      limit: size,
+      total,
+    },
+  };
+  return data;
 };
 
 const updateStatus = async (id: string, payload: IUser) => {
