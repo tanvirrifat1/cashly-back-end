@@ -40,18 +40,18 @@ const suspendUser = async (userId: string, days: number) => {
   );
 
   // Notify the agency
-  sendNotifications({
-    receiver: userId,
-    text: `Your account has been suspended for ${days} days.`,
-  });
+  // sendNotifications({
+  //   receiver: userId,
+  //   text: `Your account has been suspended for ${days} days.`,
+  // });
 
-  if (agency?.loginStatus === 'approved') {
-    await twilioClient.messages.create({
-      body: `Your account has been suspended for ${days} days.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: agency?.phone || '',
-    });
-  }
+  // if (agency?.loginStatus === 'approved') {
+  //   await twilioClient.messages.create({
+  //     body: `Your account has been suspended for ${days} days.`,
+  //     from: process.env.TWILIO_PHONE_NUMBER,
+  //     to: agency?.phone || '',
+  //   });
+  // }
 
   // Notify sub-users
   suspendedSubUsers.forEach(subUser => {
@@ -104,13 +104,13 @@ const reactivateUsers = async () => {
     );
   }
 
-  if (agencies[0].loginStatus === 'approved') {
-    await twilioClient.messages.create({
-      body: `Your account has been reactivated.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: agencies[0].phone || '',
-    });
-  }
+  // if (agencies[0].loginStatus === 'approved') {
+  //   await twilioClient.messages.create({
+  //     body: `Your account has been reactivated.`,
+  //     from: process.env.TWILIO_PHONE_NUMBER,
+  //     to: agencies[0].phone || '',
+  //   });
+  // }
 
   return { message: 'Agencies and sub-users reactivated successfully.' };
 };
@@ -183,13 +183,13 @@ const ActiveUser = async (userId: string) => {
     }
   });
 
-  if (user?.loginStatus === 'approved') {
-    await twilioClient.messages.create({
-      body: `Your account has been reactivated.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: user.phone,
-    });
-  }
+  // if (user?.loginStatus === 'approved') {
+  //   await twilioClient.messages.create({
+  //     body: `Your account has been reactivated.`,
+  //     from: process.env.TWILIO_PHONE_NUMBER,
+  //     to: user.phone,
+  //   });
+  // }
 
   return { user, reactivatedSubUsers };
 };
