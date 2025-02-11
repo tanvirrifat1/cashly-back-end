@@ -4,32 +4,38 @@ import { Request, Response } from 'express';
 import { UserSuspentionService } from './userSuspention.service';
 import ApiError from '../../../errors/ApiError';
 import catchAsync from '../../../shared/catchAsync';
+import { User } from '../user/user.model';
 
-const suspendUserController = async (req: Request, res: Response) => {
-  try {
-    const { userId, days } = req.body;
+// const suspendUserController = async (req: Request, res: Response) => {
+//   try {
+//     const { userId, days } = req.body;
 
-    if (!userId || !days) {
-      return res
-        .status(400)
-        .json({ error: 'User ID and suspension duration are required' });
-    }
+//     if (!userId || !days) {
+//       return res
+//         .status(400)
+//         .json({ error: 'User ID and suspension duration are required' });
+//     }
 
-    const user = await UserSuspentionService.suspendUser(userId, days);
+//     const isUser = await User.findOne({ _id: userId });
+//     if (!isUser) {
+//       throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+//     }
 
-    sendResponse(res, {
-      success: true,
-      statusCode: StatusCodes.OK,
-      message: 'User suspended successfully',
-      data: user,
-    });
-  } catch (error) {
-    throw new ApiError(
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      'Something went wrong'
-    );
-  }
-};
+//     const user = await UserSuspentionService.suspendUser(userId, days);
+
+//     sendResponse(res, {
+//       success: true,
+//       statusCode: StatusCodes.OK,
+//       message: 'User suspended successfully',
+//       data: user,
+//     });
+//   } catch (error) {
+//     throw new ApiError(
+//       StatusCodes.INTERNAL_SERVER_ERROR,
+//       'Something went wrong'
+//     );
+//   }
+// };
 
 const ReactivateUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await UserSuspentionService.reactivateUsers();
@@ -76,7 +82,6 @@ const ActiveUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const UserSuspentionController = {
-  suspendUserController,
   ReactivateUsers,
   getAllSuspendedUsers,
   getSuspendedUsers,

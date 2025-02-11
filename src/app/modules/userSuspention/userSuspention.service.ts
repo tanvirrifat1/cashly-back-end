@@ -3,67 +3,130 @@ import ApiError from '../../../errors/ApiError';
 import { User } from '../user/user.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
 import { twilioClient } from '../../../shared/mesg.send';
+import mongoose from 'mongoose';
+import { NextFunction, Request, Response } from 'express';
 
-const suspendUser = async (userId: string, days: number) => {
-  const suspensionEndDate = new Date();
-  suspensionEndDate.setDate(suspensionEndDate.getDate() + days);
+// const suspendUser = async (userId: string, days: number) => {
+//   console.log(userId);
+//   const suspensionEndDate = new Date();
+//   suspensionEndDate.setDate(suspensionEndDate.getDate() + days);
+//   console.log('object');
 
-  const isUser = await User.findById(userId);
+//   const isUser = await User.findOne({ _id: userId });
 
-  if (!isUser) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
-  }
+//   console.log(isUser);
+//   if (!isUser) {
+//     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+//   }
 
-  // Suspend the agency
-  const agency = await User.findByIdAndUpdate(
-    userId,
-    { isSuspended: true, suspensionEndDate },
-    { new: true }
-  );
+//   // Suspend the agency
+//   const agency = await User.findByIdAndUpdate(
+//     userId,
+//     { isSuspended: true, suspensionEndDate },
+//     { new: true }
+//   );
 
-  if (!agency) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Failed to suspend agency');
-  }
+//   if (!agency) {
+//     throw new ApiError(StatusCodes.NOT_FOUND, 'Failed to suspend agency');
+//   }
 
-  // Find sub-users associated with the agency
-  const subUsers = await User.find({ agencis: isUser._id });
+//   // Find sub-users associated with the agency
+//   const subUsers = await User.find({ agencis: isUser._id });
 
-  // Suspend all sub-users
-  const suspendedSubUsers = await Promise.all(
-    subUsers.map(subUser =>
-      User.findByIdAndUpdate(
-        subUser._id,
-        { isSuspended: true, suspensionEndDate },
-        { new: true }
+//   // Suspend all sub-users
+//   const suspendedSubUsers = await Promise.all(
+//     subUsers.map(subUser =>
+//       User.findByIdAndUpdate(
+//         subUser._id,
+//         { isSuspended: true, suspensionEndDate },
+//         { new: true }
+//       )
+//     )
+//   );
+
+//   // Notify the agency
+//   sendNotifications({
+//     receiver: userId,
+//     text: `Your account has been suspended for ${days} days.`,
+//   });
+
+//   if (agency?.loginStatus === 'approved') {
+//     await twilioClient.messages.create({
+//       body: `Your account has been suspended for ${days} days.`,
+//       from: process.env.TWILIO_PHONE_NUMBER,
+//       to: agency?.phone || '',
+//     });
+//   }
+
+//   // Notify sub-users
+//   suspendedSubUsers.forEach(subUser => {
+//     if (subUser) {
+//       sendNotifications({
+//         receiver: subUser._id,
+//         text: `Your account has been suspended because the agency has been suspended for ${days} days.`,
+//       });
+//     }
+//   });
+
+//   return { agency, suspendedSubUsers };
+// };
+
+const suspendUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, days } = req.body;
+
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return next(
+        new ApiError(StatusCodes.BAD_REQUEST, 'Invalid user ID format')
+      );
+    }
+
+    const suspensionEndDate = new Date();
+    suspensionEndDate.setDate(suspensionEndDate.getDate() + days);
+
+    const isUser = await User.findById(userId);
+    if (!isUser) {
+      return next(new ApiError(StatusCodes.NOT_FOUND, 'User not found'));
+    }
+
+    // Suspend the agency
+    const agency = await User.findByIdAndUpdate(
+      userId,
+      { isSuspended: true, suspensionEndDate },
+      { new: true }
+    );
+
+    if (!agency) {
+      return next(
+        new ApiError(StatusCodes.NOT_FOUND, 'Failed to suspend agency')
+      );
+    }
+
+    // Find and suspend all sub-users
+    const subUsers = await User.find({ agency: isUser._id });
+    const suspendedSubUsers = await Promise.all(
+      subUsers.map(subUser =>
+        User.findByIdAndUpdate(
+          subUser._id,
+          { isSuspended: true, suspensionEndDate },
+          { new: true }
+        )
       )
-    )
-  );
+    );
 
-  // Notify the agency
-  // sendNotifications({
-  //   receiver: userId,
-  //   text: `Your account has been suspended for ${days} days.`,
-  // });
+    // if (agency?.loginStatus === 'approved') {
+    //   await twilioClient.messages.create({
+    //     body: `Your account has been suspended for ${days} days.`,
+    //     from: process.env.TWILIO_PHONE_NUMBER,
+    //     to: agency?.phone || '',
+    //   });
+    // }
 
-  // if (agency?.loginStatus === 'approved') {
-  //   await twilioClient.messages.create({
-  //     body: `Your account has been suspended for ${days} days.`,
-  //     from: process.env.TWILIO_PHONE_NUMBER,
-  //     to: agency?.phone || '',
-  //   });
-  // }
-
-  // Notify sub-users
-  // suspendedSubUsers.forEach(subUser => {
-  //   if (subUser) {
-  //     sendNotifications({
-  //       receiver: subUser._id,
-  //       text: `Your account has been suspended because the agency has been suspended for ${days} days.`,
-  //     });
-  //   }
-  // });
-
-  return { agency, suspendedSubUsers };
+    return res.status(StatusCodes.OK).json({ agency, suspendedSubUsers });
+  } catch (error) {
+    next(error); // Ensure the error is passed to globalErrorHandler
+  }
 };
 
 const reactivateUsers = async () => {

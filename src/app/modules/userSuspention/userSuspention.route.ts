@@ -2,12 +2,13 @@ import express from 'express';
 import { USER_ROLES } from '../../../enums/user';
 import auth from '../../middlewares/auth';
 import { UserSuspentionController } from './userSuspention.controller';
+import { UserSuspentionService } from './userSuspention.service';
 const router = express.Router();
 
 router.post(
   '/suspend-user',
   auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
-  UserSuspentionController.suspendUserController
+  UserSuspentionService.suspendUser
 );
 
 router.post(
