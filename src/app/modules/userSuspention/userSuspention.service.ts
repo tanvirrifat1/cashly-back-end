@@ -132,9 +132,9 @@ const getUserStatus = async (userId: string) => {
 const getAllSuspendedUsers = async () => {
   const users = await User.find({ isSuspended: true }).populate('agency buyer');
 
-  if (users.length === 0) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended users found');
-  }
+  // if (users.length === 0) {
+  //   throw new ApiError(StatusCodes.NOT_FOUND, 'No suspended users found');
+  // }
 
   return users;
 };
