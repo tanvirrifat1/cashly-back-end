@@ -11,11 +11,6 @@ const getOrderRequest = async (
   userId: string,
   query: Record<string, unknown>
 ) => {
-  const isSubUser = await User.findById(userId);
-
-  const isSubAgency = isSubUser?.agencis;
-  console.log(isSubUser);
-
   const { page, limit, searchTerm, ...filterData } = query;
   const anyConditions: any[] = [];
 
