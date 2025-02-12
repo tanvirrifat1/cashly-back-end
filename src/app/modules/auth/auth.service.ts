@@ -111,7 +111,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  // Check verified and status
+  // Check if verified
   if (!isExistUser.verified) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
@@ -119,7 +119,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
     );
   }
 
-  // Check user status
+  // Check if account is deleted
   if (isExistUser.status === 'deleted') {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
@@ -127,8 +127,27 @@ const loginUserFromDB = async (payload: ILoginData) => {
     );
   }
 
+  // Check if account is suspended
+  if (isExistUser.isSuspended === true) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Account is suspended, Please contact the admin'
+    );
+  }
+
+  // Check password
+  if (
+    password &&
+    !(await User.isMatchPassword(password, isExistUser.password))
+  ) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
+  }
+
+  let agencyTokens = null;
+
   if (isExistUser.role === USER_ROLES.SUB_USER) {
     const agency = await User.findOne({ _id: isExistUser.agencis });
+
     if (!agency) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
@@ -137,49 +156,123 @@ const loginUserFromDB = async (payload: ILoginData) => {
     }
 
     // Check if the agency's subscription is active
-    if (!agency.subscription === true) {
+    if (!agency.subscription) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
         'Your agency’s subscription is inactive. Please contact the agency admin.'
       );
     }
+
+    // Generate tokens for the agency
+    agencyTokens = {
+      accessToken: jwtHelper.createToken(
+        { id: agency._id, role: agency.role, email: agency.email },
+        config.jwt.jwt_secret as Secret,
+        '60d'
+      ),
+    };
   }
 
-  // Check login status
-  if (isExistUser.isSuspended === true) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Account is suspended, Please contact the admin'
-    );
-  }
-
-  // Check match password
-  if (
-    password &&
-    !(await User.isMatchPassword(password, isExistUser.password))
-  ) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
-  }
-
-  // Create access token
-  const accessToken = jwtHelper.createToken(
-    { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
-    config.jwt.jwt_secret as Secret,
-    '30d'
-  );
-
-  // Create refresh token
-  const refreshToken = jwtHelper.createToken(
-    { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
-    config.jwt.jwtRefreshSecret as Secret,
-    '60d'
-  );
+  // Generate tokens for SUB_USER or regular user
+  const userTokens = {
+    accessToken: jwtHelper.createToken(
+      { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
+      config.jwt.jwt_secret as Secret,
+      '60d'
+    ),
+  };
 
   // Remove sensitive data before sending response
   const user = isExistUser.toObject();
 
-  return { accessToken, refreshToken, user };
+  return {
+    userTokens, // SUB_USER's own token
+    agencyTokens, // Agency's token (if SUB_USER)
+    user,
+  };
 };
+
+// const loginUserFromDB = async (payload: ILoginData) => {
+//   const { email, password } = payload;
+
+//   if (!password) {
+//     throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is required');
+//   }
+
+//   const isExistUser = await User.findOne({ email }).select('+password');
+//   if (!isExistUser) {
+//     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+//   }
+
+//   // Check verified and status
+//   if (!isExistUser.verified) {
+//     throw new ApiError(
+//       StatusCodes.BAD_REQUEST,
+//       'Please verify your account, then try to login again'
+//     );
+//   }
+
+//   // Check user status
+//   if (isExistUser.status === 'deleted') {
+//     throw new ApiError(
+//       StatusCodes.BAD_REQUEST,
+//       'You don’t have permission to access this content. It looks like your account has been deactivated.'
+//     );
+//   }
+
+//   if (isExistUser.role === USER_ROLES.SUB_USER) {
+//     const agency = await User.findOne({ _id: isExistUser.agencis });
+//     if (!agency) {
+//       throw new ApiError(
+//         StatusCodes.BAD_REQUEST,
+//         'Associated agency not found'
+//       );
+//     }
+
+//     // Check if the agency's subscription is active
+//     if (!agency.subscription === true) {
+//       throw new ApiError(
+//         StatusCodes.BAD_REQUEST,
+//         'Your agency’s subscription is inactive. Please contact the agency admin.'
+//       );
+//     }
+//   }
+
+//   // Check login status
+//   if (isExistUser.isSuspended === true) {
+//     throw new ApiError(
+//       StatusCodes.BAD_REQUEST,
+//       'Account is suspended, Please contact the admin'
+//     );
+//   }
+
+//   // Check match password
+//   if (
+//     password &&
+//     !(await User.isMatchPassword(password, isExistUser.password))
+//   ) {
+//     throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
+//   }
+
+//   // Create access token
+//   const accessToken = jwtHelper.createToken(
+//     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
+//     config.jwt.jwt_secret as Secret,
+//     '30d'
+//   );
+
+//   // Create refresh token
+//   const refreshToken = jwtHelper.createToken(
+//     { id: isExistUser._id, role: isExistUser.role, email: isExistUser.email },
+//     config.jwt.jwtRefreshSecret as Secret,
+//     '60d'
+//   );
+
+//   // Remove sensitive data before sending response
+//   const user = isExistUser.toObject();
+
+//   return { accessToken, refreshToken, user };
+// };
 
 const forgetPasswordToDB = async (email: string) => {
   const isExistUser = await User.isExistUserByEmail(email);

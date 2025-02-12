@@ -8,13 +8,13 @@ const router = express.Router();
 
 router.get(
   '/room',
-  auth(USER_ROLES.BUYER, USER_ROLES.AGENCY),
+  auth(USER_ROLES.BUYER, USER_ROLES.AGENCY, USER_ROLES.SUB_USER),
   ChatRoomController.getOrCreateRoom
 );
 
 router.get(
   '/get-inbox',
-  auth(USER_ROLES.BUYER, USER_ROLES.AGENCY),
+  auth(USER_ROLES.BUYER, USER_ROLES.AGENCY, USER_ROLES.SUB_USER),
   ChatRoomController.getAllInboxs
 );
 

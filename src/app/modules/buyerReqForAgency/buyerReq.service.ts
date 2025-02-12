@@ -5,11 +5,17 @@ import { IBuyerReqForAgency } from './buyerReq.interface';
 import { Order } from '../orderCurrency/orderCurrency.model';
 import mongoose from 'mongoose';
 import { sendNotifications } from '../../../helpers/notificationHelper';
+import { User } from '../user/user.model';
 
 const getOrderRequest = async (
   userId: string,
   query: Record<string, unknown>
 ) => {
+  const isSubUser = await User.findById(userId);
+
+  const isSubAgency = isSubUser?.agencis;
+  console.log(isSubUser);
+
   const { page, limit, searchTerm, ...filterData } = query;
   const anyConditions: any[] = [];
 

@@ -7,13 +7,13 @@ const router = express.Router();
 
 router.get(
   '/get-all-transactions',
-  auth(USER_ROLES.AGENCY),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUB_USER),
   currencyTransactionController.getAllCurrencyTransactions
 );
 
 router.get(
   '/get-transactions',
-  auth(USER_ROLES.AGENCY),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUB_USER),
   currencyTransactionController.getTransaction
 );
 
