@@ -39,7 +39,7 @@ app.post(
 cron.schedule('* * * * *', async () => {
   // logger.info('Running daily reactivation job');
   await UserSuspentionService.reactivateUsers();
-  logger.info('Reactivation job completed');
+  logger.info('Reactivation user completed');
 });
 
 app.use(express.json());

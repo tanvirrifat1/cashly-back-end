@@ -16,10 +16,14 @@ const addToCurrency = async (userId: string, data: ICurrency) => {
 
   const isExist = await Currency.findOne({
     currency: data.currency,
+    amount: data.amount,
     userId: userId,
   });
   if (isExist) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Currency already exist!');
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Currency and amount already exist!'
+    );
   }
 
   const value = {
@@ -96,12 +100,14 @@ const getAllCurrencyForBuyer = async (query: Record<string, unknown>) => {
   const { page, limit, currency, amount, searchTerm, ...filterData } = query;
   const anyConditions: any[] = [];
 
+  // Filter by currency
   if (currency) {
     anyConditions.push({ currency });
   }
 
+  // Filter by amount (gte the specified amount)
   if (amount) {
-    anyConditions.push({ amount });
+    anyConditions.push({ amount: { $gte: parseFloat(amount as string) } });
   }
 
   // Filter by additional filterData fields
@@ -121,7 +127,7 @@ const getAllCurrencyForBuyer = async (query: Record<string, unknown>) => {
   const size = parseInt(limit as string) || 10;
   const skip = (pages - 1) * size;
 
-  // Fetch campaigns
+  // Fetch currencies with filtering and sorting
   const result = await Currency.find(whereConditions)
     .populate({
       path: 'userId',
@@ -130,15 +136,25 @@ const getAllCurrencyForBuyer = async (query: Record<string, unknown>) => {
         path: 'agency',
       },
     })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(size)
+    .sort({ createdAt: -1 }) // Sort by createdAt first
     .lean();
 
+  // Sort by agency rating
+  const sortedAgencies = result.sort((a: any, b: any) => {
+    const ratingA = a.userId?.agency?.rating ?? 0; // Ensure proper access
+    const ratingB = b.userId?.agency?.rating ?? 0;
+
+    return ratingB - ratingA; // Descending order (highest rating first)
+  });
+
+  // Paginate after sorting
+  const paginatedAgencies = sortedAgencies.slice(skip, skip + size);
+
+  // Count total documents matching the conditions
   const count = await Currency.countDocuments(whereConditions);
 
   return {
-    result,
+    result: paginatedAgencies,
     meta: {
       page: pages,
       total: count,
@@ -155,11 +171,15 @@ const updateCurrency = async (id: string, data: ICurrency) => {
 
   const isExist = await Currency.findOne({
     currency: data.currency,
+    amount: data.amount,
     userId: data.userId,
   });
 
   if (isExist) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Currency already exist!');
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Currency and amount already exist!'
+    );
   }
 
   const result = await Currency.findByIdAndUpdate(id, data, {
@@ -170,8 +190,6 @@ const updateCurrency = async (id: string, data: ICurrency) => {
 
 const deleteCurrency = async (id: string) => {
   const isExist = await Currency.findById(id);
-
-  console.log(isExist);
 
   if (!isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Currency not found!');

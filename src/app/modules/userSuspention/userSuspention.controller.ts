@@ -5,6 +5,7 @@ import { UserSuspentionService } from './userSuspention.service';
 import ApiError from '../../../errors/ApiError';
 import catchAsync from '../../../shared/catchAsync';
 import { User } from '../user/user.model';
+import { logger } from '../../../shared/logger';
 
 // const suspendUserController = async (req: Request, res: Response) => {
 //   try {
@@ -39,11 +40,10 @@ import { User } from '../user/user.model';
 
 const ReactivateUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await UserSuspentionService.reactivateUsers();
-
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'User reactivated successfully',
+    message: 'Suspended users reactivated successfully',
     data: result,
   });
 });

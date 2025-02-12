@@ -163,12 +163,21 @@ const currencyEnum = z.enum([
   'ZWL', // Zimbabwean Dollar
 ]);
 
+const locationSchema = z
+  .object({
+    type: z.literal('Point'),
+    coordinates: z
+      .array(z.number())
+      .length(2, 'Coordinates must be an array of exactly two numbers'),
+  })
+  .optional();
+
 // Define the Zod schema for ICurrency
 const currencySchema = z.object({
   body: z.object({
     amount: z.string().min(1, { message: 'Amount is required' }),
     currency: currencyEnum,
-    location: z.string().min(1, { message: 'Location is required' }),
+    location: locationSchema,
     date: z
       .string()
       .refine(val => !isNaN(Date.parse(val)), {
@@ -182,7 +191,7 @@ const CurrencyUpdate = z.object({
   body: z.object({
     amount: z.string().optional(),
     currency: currencyEnum.optional(),
-    location: z.string().optional(),
+    location: locationSchema.optional(),
     date: z
       .string()
       .optional()

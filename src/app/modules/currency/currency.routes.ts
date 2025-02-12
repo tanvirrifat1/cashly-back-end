@@ -31,7 +31,7 @@ router.patch(
 
 router.delete(
   '/delete/:id',
-  // auth(USER_ROLES.AGENCY),
+  auth(USER_ROLES.AGENCY),
   currencyController.deleteCurrency
 );
 
