@@ -12,7 +12,7 @@ const getAllInboxs = async (id: string, query: Record<string, unknown>) => {
 
   // Fetch rooms
   const messages = await Room.find({
-    userId: id,
+    $or: [{ userId: id }, { receiverId: id }],
   })
     .select('-userId -participants')
     .populate({

@@ -131,7 +131,7 @@ const getAllCurrencyForBuyer = async (query: Record<string, unknown>) => {
   const result = await Currency.find(whereConditions)
     .populate({
       path: 'userId',
-      select: 'agency -_id',
+      select: 'agency ',
       populate: {
         path: 'agency',
       },
