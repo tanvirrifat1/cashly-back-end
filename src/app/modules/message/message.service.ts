@@ -84,13 +84,12 @@ const getAllMessages = async (id: string, query: Record<string, unknown>) => {
     order = 'desc',
     ...filterData
   } = query;
-  const anyConditions: any[] = [];
+
+  const anyConditions: any[] = [{ roomId: id }]; // Ensure messages are filtered by roomId
 
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(
-      ([field, value]) => ({
-        [field]: value,
-      })
+      ([field, value]) => ({ [field]: value })
     );
     anyConditions.push({ $and: filterConditions });
   }
@@ -98,11 +97,11 @@ const getAllMessages = async (id: string, query: Record<string, unknown>) => {
   // Apply filter conditions
   const whereConditions =
     anyConditions.length > 0 ? { $and: anyConditions } : {};
+
   const pages = parseInt(page as string) || 1;
   const size = parseInt(limit as string) || 10;
   const skip = (pages - 1) * size;
 
-  // Set default sort order to show new data first
   const sortOrder: SortOrder = order === 'desc' ? -1 : 1;
   const sortCondition: { [key: string]: SortOrder } = {
     [sortBy as string]: sortOrder,
@@ -113,9 +112,10 @@ const getAllMessages = async (id: string, query: Record<string, unknown>) => {
     .skip(skip)
     .limit(size);
   const count = await Message.countDocuments(whereConditions);
+
   await Room.updateOne({ _id: id }, { unreadCount: 0 });
 
-  const data: any = {
+  return {
     result,
     meta: {
       page: pages,
@@ -125,7 +125,6 @@ const getAllMessages = async (id: string, query: Record<string, unknown>) => {
       currentPage: pages,
     },
   };
-  return data;
 };
 
 export const MessageService = {
