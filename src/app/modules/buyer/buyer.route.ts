@@ -10,7 +10,7 @@ const router = express.Router();
 router.patch(
   '/update-buyer',
   fileUploadHandler(),
-  auth(USER_ROLES.BUYER),
+  auth(USER_ROLES.BUYER, USER_ROLES.SUB_USER),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = BuyerValidation.BuyerShema.parse(JSON.parse(req.body.data));

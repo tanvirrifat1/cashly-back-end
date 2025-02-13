@@ -10,7 +10,7 @@ const router = express.Router();
 router.patch(
   '/update-agency',
   fileUploadHandler(),
-  auth(USER_ROLES.AGENCY),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUB_USER),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = AgencyValidation.AgencyShema.parse(JSON.parse(req.body.data));
