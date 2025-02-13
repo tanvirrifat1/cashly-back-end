@@ -24,7 +24,8 @@ router.get(
     USER_ROLES.ADMIN,
     USER_ROLES.AGENCY,
     USER_ROLES.BUYER,
-    USER_ROLES.SUPER_ADMIN
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.SUB_USER
   ),
   UserController.getUserProfile
 );
@@ -36,7 +37,8 @@ router.patch(
     USER_ROLES.ADMIN,
     USER_ROLES.AGENCY,
     USER_ROLES.BUYER,
-    USER_ROLES.SUPER_ADMIN
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.SUB_USER
   ),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
