@@ -1,4 +1,3 @@
-import { JwtPayload } from 'jsonwebtoken';
 import { Room } from './chatRoom.model';
 import { Message } from '../message/message.model';
 
@@ -37,32 +36,33 @@ const getAllInboxs = async (id: string, query: Record<string, unknown>) => {
     .limit(size)
     .lean();
 
+  console.log(messages);
+
   // Fetch full last message for each room
   const roomIds = messages.map(msg => msg._id);
   const lastMessages = await Message.aggregate([
     { $match: { roomId: { $in: roomIds } } },
     { $sort: { createdAt: -1 } },
-    { $group: { _id: '$roomId', lastMessage: { $first: '$$ROOT' } } }, // Get the full message document
+    { $group: { _id: '$roomId', lastMessage: { $first: '$$ROOT' } } },
   ]);
 
-  // Convert lastMessages array into a dictionary for quick lookup
   const lastMessageMap = new Map(
     lastMessages.map(msg => [msg._id.toString(), msg.lastMessage])
   );
 
   // Transform data
   const transformedMessages = messages.map(msg => {
-    const isUserSender = msg.userId?._id.toString() === id; // Check if logged-in user is the sender
-    const receiver = isUserSender ? msg.receiverId : msg.userId; // Get the other party's data
+    const isUserSender = msg.userId?._id.toString() === id;
+    const receiver: any = isUserSender ? msg.receiverId : msg.userId;
 
     return {
-      roomId: msg._id, // Room Collection ID (Room Name ID)
+      roomId: msg._id,
       receiverId: receiver?._id || null,
-      image: (receiver?.agency?.image as any) || receiver?.buyer?.image || null,
+      image: receiver?.agency?.image || receiver?.buyer?.image || null,
       firstName:
         receiver?.agency?.firstName || receiver?.buyer?.firstName || '',
       lastName: receiver?.agency?.lastName || receiver?.buyer?.lastName || '',
-      lastMessage: lastMessageMap.get(msg._id.toString()) || null, // Full last message document
+      lastMessage: lastMessageMap.get(msg._id.toString()) || null,
     };
   });
 
