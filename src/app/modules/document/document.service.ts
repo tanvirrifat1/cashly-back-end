@@ -5,15 +5,53 @@ import { Document } from './document.model';
 import { QueryBuilder } from '../../builder/QueryBuilder';
 import { USER_ROLES } from '../../../enums/user';
 import { User } from '../user/user.model';
+import jwt, { Secret } from 'jsonwebtoken';
+import config from '../../../config';
+
+// const createDocumentToDB = async (id: string, payload: Partial<IDocument>) => {
+//   const isExist = await Document.findOne({ userId: id });
+
+//   if (isExist) {
+//     throw new ApiError(StatusCodes.BAD_REQUEST, 'User already has a document');
+//   }
+
+//   const isUser = await User.findById(id);
+
+//   const value = {
+//     ...payload,
+//     userId: id,
+//     role: isUser?.role,
+//   };
+
+//   const result = await Document.create(value);
+
+//   const isDocumentUploaded = await User.findByIdAndUpdate(id, {
+//     isDocumentUploaded: true,
+//   });
+
+//   if (!isDocumentUploaded) {
+//     throw new ApiError(StatusCodes.BAD_REQUEST, 'Document not uploaded');
+//   }
+
+//   if (!result) {
+//     throw new Error('Document not created!');
+//   }
+
+//   return result;
+// };
 
 const createDocumentToDB = async (id: string, payload: Partial<IDocument>) => {
+  const isUser = await User.findById(id);
+
+  if (!isUser) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+  }
+
   const isExist = await Document.findOne({ userId: id });
 
   if (isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'User already has a document');
   }
-
-  const isUser = await User.findById(id);
 
   const value = {
     ...payload,
@@ -22,13 +60,35 @@ const createDocumentToDB = async (id: string, payload: Partial<IDocument>) => {
   };
 
   const result = await Document.create(value);
-
   if (!result) {
-    throw new Error('Document not created!');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Document not created');
   }
 
-  return result;
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { isDocumentUploaded: true },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Document upload failed');
+  }
+
+  // Generate a new token
+  const token = jwt.sign(
+    { id: updatedUser._id, role: updatedUser.role },
+    config.jwt.jwt_secret as Secret,
+    { expiresIn: '60d' }
+  );
+
+  return {
+    message: 'Document uploaded successfully',
+    accessToken: token,
+    user: updatedUser,
+  };
 };
+
+export { createDocumentToDB };
 
 const getAllDocuments = async (query: Record<string, unknown>, id: string) => {
   const blogQuery = new QueryBuilder(

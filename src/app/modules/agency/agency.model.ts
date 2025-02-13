@@ -32,7 +32,7 @@ const agencySchema = new Schema<IAgency>({
   image: {
     type: String,
     required: false,
-    default: '/images/user-1738582368043.png',
+    default: '/images/nid-1738556782209.jpg',
   },
 
   location: {

@@ -15,7 +15,6 @@ const userSchema = new Schema<IUser, UserModal>(
     },
     image: {
       type: String,
-      default: '/images/user-1738582368043.png',
     },
     email: {
       type: String,
@@ -46,6 +45,10 @@ const userSchema = new Schema<IUser, UserModal>(
     },
     lastName: {
       type: String,
+    },
+    isDocumentUploaded: {
+      type: Boolean,
+      default: false,
     },
 
     status: {

@@ -18,6 +18,7 @@ export type IUser = {
   agency?: Types.ObjectId;
   buyer?: Types.ObjectId;
   agencis?: Types.ObjectId;
+  isDocumentUploaded: boolean;
   subscription: boolean;
   location: {
     type: { type: String; enum: ['Point']; default: 'Point' };

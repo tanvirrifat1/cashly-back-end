@@ -28,7 +28,7 @@ const buyerSchema = new Schema<IBuyer>({
   },
   image: {
     type: String,
-    default: '/images/user-1738582368043.png',
+    default: '/images/nid-1738556782209.jpg',
   },
 
   location: {
