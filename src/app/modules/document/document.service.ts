@@ -76,7 +76,7 @@ const createDocumentToDB = async (id: string, payload: Partial<IDocument>) => {
 
   // Generate a new token
   const token = jwt.sign(
-    { id: updatedUser._id, role: updatedUser.role },
+    { id: updatedUser._id, role: updatedUser.role, email: updatedUser.email },
     config.jwt.jwt_secret as Secret,
     { expiresIn: '60d' }
   );
