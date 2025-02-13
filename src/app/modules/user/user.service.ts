@@ -10,7 +10,6 @@ import unlinkFile from '../../../shared/unlinkFile';
 import { twilioClient } from '../../../shared/mesg.send';
 import { IAgency } from '../agency/agency.interface';
 import { Agency } from '../agency/agency.model';
-import { IBuyer } from '../buyer/buyer.interface';
 import { Buyer } from '../buyer/buyer.model';
 
 const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
@@ -82,18 +81,18 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
       expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
     };
 
-    // await twilioClient.messages.create({
-    //   body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
-    //   from: process.env.TWILIO_PHONE_NUMBER,
-    //   to: user.phone || payload.phone,
-    // });
-
     await twilioClient.messages.create({
-      from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
-      contentSid: process.env.TWILIO_CONTACT_SID,
-      contentVariables: `{"1":"${otp}","2":"5"}`,
-      to: `whatsapp:${user.phone || payload.phone}`,
+      body: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: user.phone || payload.phone,
     });
+
+    // await twilioClient.messages.create({
+    //   from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
+    //   contentSid: process.env.TWILIO_CONTACT_SID,
+    //   contentVariables: `{"1":"${otp}","2":"5"}`,
+    //   to: `whatsapp:${user.phone || payload.phone}`,
+    // });
 
     // Update user with authentication details
     const updatedAuthenticationUser = await User.findOneAndUpdate(
@@ -189,18 +188,18 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
       expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
     };
 
-    // await twilioClient.messages.create({
-    //   body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
-    //   from: process.env.TWILIO_PHONE_NUMBER,
-    //   to: user.phone || payload.phone,
-    // });
-
     await twilioClient.messages.create({
-      from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
-      contentSid: process.env.TWILIO_CONTACT_SID,
-      contentVariables: `{"1":"${otp}","2":"5"}`,
-      to: `whatsapp:${user.phone || payload.phone}`,
+      body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: user.phone || payload.phone,
     });
+
+    // await twilioClient.messages.create({
+    //   from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
+    //   contentSid: process.env.TWILIO_CONTACT_SID,
+    //   contentVariables: `{"1":"${otp}","2":"5"}`,
+    //   to: `whatsapp:${user.phone || payload.phone}`,
+    // });
 
     // Update user with authentication details
     const updatedAuthenticationUser = await User.findOneAndUpdate(
