@@ -8,37 +8,6 @@ import { SortOrder } from 'mongoose';
 // const getAllMessages = async (id: string, query: Record<string, unknown>) => {
 //   const { page, limit } = query;
 
-//   // Pagination setup
-//   const pages = parseInt(page as string) || 1;
-//   const size = parseInt(limit as string) || 10;
-//   const skip = (pages - 1) * size;
-
-//   // Fetch messages
-//   const messages = await Message.find({
-//     roomId: id,
-//   })
-
-//     .sort({ createdAt: -1 })
-//     .skip(skip)
-//     .limit(size)
-//     .lean();
-
-//   const count = await Message.countDocuments({
-//     roomId: id,
-//   });
-
-//   return {
-//     result: messages,
-//     meta: {
-//       page: pages,
-//       total: count,
-//     },
-//   };
-// };
-
-// const getAllMessages = async (id: string, query: Record<string, unknown>) => {
-//   const { page, limit } = query;
-
 //   const pages = parseInt(page as string) || 1;
 //   const size = parseInt(limit as string) || 10;
 //   const skip = (pages - 1) * size;
@@ -85,7 +54,7 @@ const getAllMessages = async (id: string, query: Record<string, unknown>) => {
     ...filterData
   } = query;
 
-  const anyConditions: any[] = [{ roomId: id }]; // Ensure messages are filtered by roomId
+  const anyConditions: any[] = [{ roomId: id }];
 
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(

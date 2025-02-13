@@ -10,25 +10,29 @@ const getAllInboxs = async (id: string, query: Record<string, unknown>) => {
   const size = parseInt(limit as string) || 10;
   const skip = (pages - 1) * size;
 
-  // Fetch rooms
+  // Fetch rooms where user is either sender or receiver
   const messages = await Room.find({
     $or: [{ userId: id }, { receiverId: id }],
   })
-    .select('-userId -participants')
-    .populate({
-      path: 'receiverId',
-      select: 'buyer agency',
-      populate: [
-        {
-          path: 'buyer',
-          select: 'image firstName lastName',
-        },
-        {
-          path: 'agency',
-          select: 'image firstName lastName',
-        },
-      ],
-    })
+    .select('-participants')
+    .populate([
+      {
+        path: 'userId',
+        select: 'buyer agency',
+        populate: [
+          { path: 'buyer', select: 'image firstName lastName' },
+          { path: 'agency', select: 'image firstName lastName' },
+        ],
+      },
+      {
+        path: 'receiverId',
+        select: 'buyer agency',
+        populate: [
+          { path: 'buyer', select: 'image firstName lastName' },
+          { path: 'agency', select: 'image firstName lastName' },
+        ],
+      },
+    ])
     .skip(skip)
     .limit(size)
     .lean();
@@ -48,11 +52,13 @@ const getAllInboxs = async (id: string, query: Record<string, unknown>) => {
 
   // Transform data
   const transformedMessages = messages.map(msg => {
-    const receiver = msg.receiverId as any;
+    const isUserSender = msg.userId?._id.toString() === id; // Check if logged-in user is the sender
+    const receiver = isUserSender ? msg.receiverId : msg.userId; // Get the other party's data
+
     return {
       roomId: msg._id, // Room Collection ID (Room Name ID)
       receiverId: receiver?._id || null,
-      image: receiver?.agency?.image || receiver?.buyer?.image || null,
+      image: (receiver?.agency?.image as any) || receiver?.buyer?.image || null,
       firstName:
         receiver?.agency?.firstName || receiver?.buyer?.firstName || '',
       lastName: receiver?.agency?.lastName || receiver?.buyer?.lastName || '',
@@ -61,7 +67,7 @@ const getAllInboxs = async (id: string, query: Record<string, unknown>) => {
   });
 
   const count = await Room.countDocuments({
-    userId: id,
+    $or: [{ userId: id }, { receiverId: id }],
   });
 
   return {
