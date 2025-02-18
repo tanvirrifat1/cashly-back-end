@@ -14,6 +14,13 @@ const addToCurrency = async (userId: string, data: ICurrency) => {
     );
   }
 
+  if (isUser?.subscription !== true) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'You cannot add currency you are not subscribed!'
+    );
+  }
+
   const isExist = await Currency.findOne({
     currency: data.currency,
     amount: data.amount,
@@ -185,6 +192,9 @@ const updateCurrency = async (id: string, data: ICurrency) => {
   const result = await Currency.findByIdAndUpdate(id, data, {
     new: true,
   });
+
+  console.log(result);
+
   return result;
 };
 

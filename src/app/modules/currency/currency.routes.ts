@@ -22,7 +22,7 @@ router.get(
   currencyController.getAllCurrencyForBuyer
 );
 
-router.patch(
+router.post(
   '/update/:id',
   auth(USER_ROLES.AGENCY),
   validateRequest(currencyValidation.CurrencyUpdate),

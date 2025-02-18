@@ -17,7 +17,7 @@ router.get(
   buyerReqController.getSingleOrderRequest
 );
 
-router.patch(
+router.post(
   '/status/:id',
   auth(USER_ROLES.AGENCY, USER_ROLES.SUB_USER),
   buyerReqController.updateStatus

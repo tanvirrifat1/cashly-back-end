@@ -24,7 +24,7 @@ router.get(
   orderCurrencyController.getSingleOrder
 );
 
-router.patch(
+router.post(
   '/updated/:id',
   auth(USER_ROLES.BUYER),
   orderCurrencyController.updateOrderStatus
