@@ -13,6 +13,17 @@ const orderSchema = new Schema<IOrderCurrency>(
       ref: 'User',
       required: true,
     },
+
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+      },
+      coordinates: {
+        type: [Number],
+      },
+    },
+
     status: {
       type: String,
       enum: ['pending', 'completed', 'cancelled', 'accepted'],

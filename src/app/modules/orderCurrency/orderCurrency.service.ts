@@ -8,6 +8,7 @@ import { sendNotifications } from '../../../helpers/notificationHelper';
 import { BuyerReqForAgency } from '../buyerReqForAgency/buyerReq.model';
 import mongoose from 'mongoose';
 import { CurrencyTransaction } from '../currencyTransaction/currencyTransaction.model';
+import { populate } from 'dotenv';
 
 const orderCurrency = async (data: IOrderCurrency) => {
   const isExistUser = await User.findOne({ _id: data.user });
@@ -101,8 +102,23 @@ const getAllOrder = async (userId: string, query: Record<string, unknown>) => {
   const result = await Order.find(whereConditions)
     .populate({
       path: 'currency',
-      select: 'currency amount',
+      select: 'currency amount userId',
+      populate: {
+        path: 'userId',
+        select: 'agency buyer',
+        populate: {
+          path: 'agency',
+        },
+      },
     })
+    .populate({
+      path: 'user',
+      select: 'buyer',
+      populate: {
+        path: 'buyer',
+      },
+    })
+
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(size)

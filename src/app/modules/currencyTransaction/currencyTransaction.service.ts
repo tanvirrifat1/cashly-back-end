@@ -66,6 +66,13 @@ const getTransaction = async (
         path: 'agency',
       },
     })
+    .populate({
+      path: 'buyerId',
+      select: 'buyer',
+      populate: {
+        path: 'buyer',
+      },
+    })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(size)
