@@ -116,7 +116,7 @@ const updateStatus = async (id: string, payload: IBuyerReqForAgency) => {
       );
     }
 
-    const isOrder = await Order.findById(result.orderId).session(session);
+    const isOrder: any = await Order.findById(result.orderId).session(session);
 
     if (isOrder) {
       const updateOrderStatus = await Order.findByIdAndUpdate(

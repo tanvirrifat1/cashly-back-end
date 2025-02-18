@@ -36,9 +36,9 @@ const orderCurrency = async (data: IOrderCurrency) => {
     currency: data.currency,
   });
 
-  // if (isOrder) {
-  //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Order already exist!');
-  // }
+  if (isOrder) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Order already exist!');
+  }
 
   const result = await Order.create(data);
 
@@ -195,19 +195,22 @@ const updateOrderStatus = async (id: string, payload: IOrderCurrency) => {
     const transactionAmount = isCurrency?.amount;
 
     // Create a currency transaction
-    const isCurrencyTransaction = await CurrencyTransaction.create({
-      amount: transactionAmount,
-      currency: isCurrency?.currency,
-      buyerId: updatedOrder.user,
-      agencyId: isCurrency?.userId,
-      status: updatedOrder.status,
-    });
 
-    if (!isCurrencyTransaction) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        'Failed to create currency transaction!'
-      );
+    if (updatedOrder?.status === 'completed') {
+      const isCurrencyTransaction = await CurrencyTransaction.create({
+        amount: transactionAmount,
+        currency: isCurrency?.currency,
+        buyerId: updatedOrder.user,
+        agencyId: isCurrency?.userId,
+        status: updatedOrder.status,
+      });
+
+      if (!isCurrencyTransaction) {
+        throw new ApiError(
+          StatusCodes.BAD_REQUEST,
+          'Failed to create currency transaction!'
+        );
+      }
     }
 
     const value = {

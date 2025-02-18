@@ -13,4 +13,5 @@ export type ICurrency = {
   status: 'active' | 'deleted';
   rating?: number;
   count?: string;
+  address: string;
 };

@@ -19,12 +19,12 @@ const addToCurrency = async (userId: string, data: ICurrency) => {
     amount: data.amount,
     userId: userId,
   });
-  if (isExist) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Currency and amount already exist!'
-    );
-  }
+  // if (isExist) {
+  //   throw new ApiError(
+  //     StatusCodes.BAD_REQUEST,
+  //     'Currency and amount already exist!'
+  //   );
+  // }
 
   const value = {
     ...data,
@@ -175,12 +175,12 @@ const updateCurrency = async (id: string, data: ICurrency) => {
     userId: data.userId,
   });
 
-  if (isExist) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Currency and amount already exist!'
-    );
-  }
+  // if (isExist) {
+  //   throw new ApiError(
+  //     StatusCodes.BAD_REQUEST,
+  //     'Currency and amount already exist!'
+  //   );
+  // }
 
   const result = await Currency.findByIdAndUpdate(id, data, {
     new: true,

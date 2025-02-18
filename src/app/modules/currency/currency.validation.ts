@@ -176,8 +176,9 @@ const locationSchema = z
 const currencySchema = z.object({
   body: z.object({
     amount: z.string().min(1, { message: 'Amount is required' }),
+    address: z.string().min(1, { message: 'address is required' }),
     currency: currencyEnum,
-    location: locationSchema,
+    location: locationSchema.optional(),
     date: z
       .string()
       .refine(val => !isNaN(Date.parse(val)), {
@@ -190,6 +191,7 @@ const currencySchema = z.object({
 const CurrencyUpdate = z.object({
   body: z.object({
     amount: z.string().optional(),
+    address: z.string().optional(),
     currency: currencyEnum.optional(),
     location: locationSchema.optional(),
     date: z

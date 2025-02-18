@@ -20,6 +20,7 @@ export const currencySchema = new Schema<ICurrency>(
     status: { type: String, enum: ['active', 'deleted'], default: 'active' },
     count: { type: String },
     rating: { type: Number },
+    address: { type: String, required: true },
   },
   { timestamps: true }
 );
