@@ -37,9 +37,9 @@ const orderCurrency = async (data: IOrderCurrency) => {
     currency: data.currency,
   });
 
-  if (isOrder) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Order already exist!');
-  }
+  // if (isOrder) {
+  //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Order already exist!');
+  // }
 
   const result = await Order.create(data);
 

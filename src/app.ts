@@ -25,22 +25,13 @@ app.use(
 
 // Run every day at midnight
 cron.schedule('* * * * *', async () => {
-  try {
-    // Reactivate users if needed
-    await UserSuspentionService.reactivateUsers();
-    logger.info('Reactivation user completed');
-  } catch (error) {
-    logger.error('Error in cron job:', error);
-  }
+  await UserSuspentionService.reactivateUsers();
+  logger.info('Reactivation user completed');
 });
 
 cron.schedule('* * * * *', async () => {
-  try {
-    await SubscriptationService.updateExpiredSubscriptions();
-    logger.info('Expired subscriptions updated');
-  } catch (error) {
-    logger.error('Error in cron job:', error);
-  }
+  await SubscriptationService.updateExpiredSubscriptions();
+  logger.info('Expired subscriptions updated');
 });
 
 app.use(express.json());
