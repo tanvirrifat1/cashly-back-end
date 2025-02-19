@@ -1,44 +1,24 @@
-import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
 import { SubscriptationService } from './subscription.service';
-import { stripe } from '../../../shared/stripe';
-import config from '../../../config';
 
-const createCheckoutSessionController = async (req: Request, res: Response) => {
+const createSusbcription = catchAsync(async (req, res) => {
   const userId = req.user.id;
 
-  const { packageId } = req.body;
+  const result = await SubscriptationService.createSubscription(
+    userId,
+    req.body
+  );
 
-  try {
-    const sessionUrl = await SubscriptationService.createCheckoutSessionService(
-      userId,
-      packageId
-    );
-    res.status(200).json({ url: sessionUrl });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to create checkout session' });
-  }
-};
-
-const stripeWebhookController = async (req: Request, res: Response) => {
-  const sig = req.headers['stripe-signature'];
-
-  try {
-    const event = stripe.webhooks.constructEvent(
-      req.body,
-      sig as string,
-      config.webhook_secret as string
-    );
-
-    await SubscriptationService.handleStripeWebhookService(event);
-
-    res.status(200).send({ received: true });
-  } catch (err) {
-    console.error('Error in Stripe webhook');
-    res.status(400).send(`Webhook Error:`);
-  }
-};
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Subscription created successfully',
+    data: result,
+  });
+});
 
 export const SubscriptionController = {
-  createCheckoutSessionController,
-  stripeWebhookController,
+  createSusbcription,
 };

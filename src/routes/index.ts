@@ -17,9 +17,9 @@ import { BuyerReqForAgencyRoutes } from '../app/modules/buyerReqForAgency/buyerR
 import { ReviewRoutes } from '../app/modules/review/review.route';
 import { CurrencyTransactionRoutes } from '../app/modules/currencyTransaction/currencyTransaction.routes';
 import { PackageRoutes } from '../app/modules/package/package.route';
-import { SubscriptionRoutessss } from '../app/modules/subscription/subscription.route';
 import { DashboardRoutes } from '../app/modules/dashboard/dashboard.route';
 import { InboxRoutes } from '../app/modules/chatRoom/chatRoom.route';
+import { SubscriptionRoutes } from '../app/modules/subscription/subscription.route';
 
 const router = express.Router();
 
@@ -44,7 +44,7 @@ const apiRoutes = [
   { path: '/review', route: ReviewRoutes },
   { path: '/currency-transaction', route: CurrencyTransactionRoutes },
   { path: '/package', route: PackageRoutes },
-  { path: '/subscription', route: SubscriptionRoutessss },
+  { path: '/subscription', route: SubscriptionRoutes },
   { path: '/dashboard', route: DashboardRoutes },
 ];
 

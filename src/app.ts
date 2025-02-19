@@ -28,13 +28,6 @@ app.use(
   })
 );
 
-//webhook
-app.post(
-  '/webhook',
-  express.raw({ type: 'application/json' }),
-  SubscriptionController.stripeWebhookController
-);
-
 // Run every day at midnight
 cron.schedule('* * * * *', async () => {
   // logger.info('Running daily reactivation job');
