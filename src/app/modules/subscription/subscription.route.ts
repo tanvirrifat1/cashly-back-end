@@ -14,4 +14,9 @@ router.post(
   SubscriptionController.createSusbcription
 );
 
+router.post(
+  '/update-expired',
+  SubscriptionController.updateExpiredSubscriptions
+);
+
 export const SubscriptionRoutes = router;

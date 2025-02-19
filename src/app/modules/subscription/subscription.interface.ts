@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 export interface ISubscription {
   productId: string;
   purchaseId: string;
-  expiryData: string;
+  expiryDate: Date;
   purchaseDate: Date;
   packageName: string;
   purchaseToken: string;

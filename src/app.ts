@@ -8,6 +8,7 @@ import cron from 'node-cron';
 import { UserSuspentionService } from './app/modules/userSuspention/userSuspention.service';
 import { logger } from './shared/logger';
 import { SubscriptionController } from './app/modules/subscription/subscription.controller';
+import { SubscriptationService } from './app/modules/subscription/subscription.service';
 
 const app = express();
 
@@ -30,9 +31,26 @@ app.use(
 
 // Run every day at midnight
 cron.schedule('* * * * *', async () => {
-  // logger.info('Running daily reactivation job');
-  await UserSuspentionService.reactivateUsers();
-  logger.info('Reactivation user completed');
+  try {
+    // Reactivate users if needed
+    await UserSuspentionService.reactivateUsers();
+    logger.info('Reactivation user completed');
+
+    // Update expired subscriptions
+  } catch (error) {
+    logger.error('Error in cron job:', error);
+  }
+});
+
+cron.schedule('* * * * *', async () => {
+  try {
+    await SubscriptationService.updateExpiredSubscriptions();
+    logger.info('Expired subscriptions updated');
+
+    // Update expired subscriptions
+  } catch (error) {
+    logger.error('Error in cron job:', error);
+  }
 });
 
 app.use(express.json());

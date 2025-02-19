@@ -40,6 +40,33 @@ const createSubscription = async (userId: string, data: ISubscription) => {
   return result;
 };
 
+const updateExpiredSubscriptions = async () => {
+  const currentDate = new Date();
+
+  try {
+    // Find all expired subscriptions
+    const expiredSubscriptions = await Subscriptation.find({
+      expiryDate: { $lt: currentDate },
+    });
+
+    if (!expiredSubscriptions.length) {
+      return;
+    }
+
+    // Extract user IDs from expired subscriptions
+    const expiredUserIds = expiredSubscriptions.map(sub => sub.userId);
+
+    // Update all users' subscription status to false
+    await User.updateMany(
+      { _id: { $in: expiredUserIds } },
+      { $set: { subscription: false } }
+    );
+  } catch (error) {
+    console.error('Error updating expired subscriptions:', error);
+  }
+};
+
 export const SubscriptationService = {
   createSubscription,
+  updateExpiredSubscriptions,
 };

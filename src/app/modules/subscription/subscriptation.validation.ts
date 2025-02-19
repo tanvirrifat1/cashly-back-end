@@ -4,7 +4,7 @@ export const zodSubscriptionSchema = z.object({
   body: z.object({
     productId: z.string().min(1, 'Product ID is required'),
     purchaseId: z.string().min(1, 'Purchase ID is required'),
-    expiryData: z.string().min(1, 'Expiry date is required'),
+    expiryDate: z.string().min(1, 'Expiry date is required'),
     purchaseDate: z
       .date()
       .or(

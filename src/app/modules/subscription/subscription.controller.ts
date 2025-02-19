@@ -19,6 +19,18 @@ const createSusbcription = catchAsync(async (req, res) => {
   });
 });
 
+const updateExpiredSubscriptions = catchAsync(async (req, res) => {
+  const result = await SubscriptationService.updateExpiredSubscriptions();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Expired subscriptions updated successfully',
+    data: result,
+  });
+});
+
 export const SubscriptionController = {
   createSusbcription,
+  updateExpiredSubscriptions,
 };
