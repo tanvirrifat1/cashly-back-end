@@ -7,7 +7,6 @@ import { Morgan } from './shared/morgen';
 import cron from 'node-cron';
 import { UserSuspentionService } from './app/modules/userSuspention/userSuspention.service';
 import { logger } from './shared/logger';
-import { SubscriptionController } from './app/modules/subscription/subscription.controller';
 import { SubscriptationService } from './app/modules/subscription/subscription.service';
 
 const app = express();
@@ -19,12 +18,7 @@ app.use(Morgan.errorHandler);
 //body parser
 app.use(
   cors({
-    origin: [
-      'http://localhost:5173',
-      'http://10.0.70.172:5173',
-      'http://192.168.10.199:3000',
-      'http://192.168.10.33:3004',
-    ],
+    origin: '*',
     credentials: true,
   })
 );
@@ -35,8 +29,6 @@ cron.schedule('* * * * *', async () => {
     // Reactivate users if needed
     await UserSuspentionService.reactivateUsers();
     logger.info('Reactivation user completed');
-
-    // Update expired subscriptions
   } catch (error) {
     logger.error('Error in cron job:', error);
   }
@@ -46,8 +38,6 @@ cron.schedule('* * * * *', async () => {
   try {
     await SubscriptationService.updateExpiredSubscriptions();
     logger.info('Expired subscriptions updated');
-
-    // Update expired subscriptions
   } catch (error) {
     logger.error('Error in cron job:', error);
   }

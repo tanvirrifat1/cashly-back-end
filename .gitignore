@@ -3,4 +3,5 @@ node_modules
 
 /winston
 
-/uploads
+/dist/
+/uploads/
