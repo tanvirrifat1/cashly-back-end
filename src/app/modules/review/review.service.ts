@@ -13,9 +13,9 @@ const createReviewToDB = async (payload: Partial<IReview>) => {
     user: payload.user,
   });
 
-  // if (isExist) {
-  //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Review already exists');
-  // }
+  if (isExist) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Review already exists');
+  }
 
   const isUserExist = await User.findById(payload.agency);
 
