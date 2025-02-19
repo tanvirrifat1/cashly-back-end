@@ -8,7 +8,6 @@ import { sendNotifications } from '../../../helpers/notificationHelper';
 import { BuyerReqForAgency } from '../buyerReqForAgency/buyerReq.model';
 import mongoose from 'mongoose';
 import { CurrencyTransaction } from '../currencyTransaction/currencyTransaction.model';
-import { populate } from 'dotenv';
 
 const orderCurrency = async (data: IOrderCurrency) => {
   const isExistUser = await User.findOne({ _id: data.user });

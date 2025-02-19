@@ -16,15 +16,6 @@ const reviewSchema = new Schema<IReview>(
       type: Number,
       required: true,
     },
-    review: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ['active', 'delete'],
-      default: 'active',
-    },
   },
   {
     timestamps: true,

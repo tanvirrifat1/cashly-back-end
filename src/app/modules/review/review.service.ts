@@ -4,6 +4,7 @@ import { IReview } from './review.interface';
 import { Review } from './review.model';
 import { Currency } from '../currency/currency.model';
 import { Agency } from '../agency/agency.model';
+import { User } from '../user/user.model';
 
 const createReviewToDB = async (payload: Partial<IReview>) => {
   // Check if the review already exists
@@ -15,7 +16,11 @@ const createReviewToDB = async (payload: Partial<IReview>) => {
   // if (isExist) {
   //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Review already exists');
   // }
-  const isAgencyExist = await Agency.findById(payload.agency);
+
+  const isUserExist = await User.findById(payload.agency);
+
+  const isAgencyExist = await Agency.findById(isUserExist?.agency);
+
   if (!isAgencyExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Agency not found');
   }
@@ -37,7 +42,7 @@ const createReviewToDB = async (payload: Partial<IReview>) => {
   const averageRating = Math.round(totalRatings / reviewCount);
 
   await Agency.updateOne(
-    { _id: payload.agency },
+    { _id: isUserExist?.agency },
     {
       $set: {
         rating: averageRating,
