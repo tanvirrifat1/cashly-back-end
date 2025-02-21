@@ -11,6 +11,7 @@ import { twilioClient } from '../../../shared/mesg.send';
 import { IAgency } from '../agency/agency.interface';
 import { Agency } from '../agency/agency.model';
 import { Buyer } from '../buyer/buyer.model';
+import { sendNotifications } from '../../../helpers/notificationHelper';
 
 const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
   const session = await startSession();
@@ -107,6 +108,12 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
         'User not found for authentication update'
       );
     }
+
+    const data = {
+      text: `Registered successfully, ${userPayload.firstName} ${userPayload.lastName}!`,
+      type: 'ADMIN',
+    };
+    await sendNotifications(data);
 
     // Commit transaction
     await session.commitTransaction();
@@ -214,6 +221,12 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
         'User not found for authentication update'
       );
     }
+
+    const data = {
+      text: `Registered successfully, ${userPayload.firstName} ${userPayload.lastName}!`,
+      type: 'ADMIN',
+    };
+    await sendNotifications(data);
 
     // Commit transaction
     await session.commitTransaction();

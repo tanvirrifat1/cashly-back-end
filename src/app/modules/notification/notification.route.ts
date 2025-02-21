@@ -7,45 +7,31 @@ const router = express.Router();
 
 router.get(
   '/',
-
+  auth(USER_ROLES.ADMIN, USER_ROLES.AGENCY, USER_ROLES.BUYER),
   NotificationController.getNotificationToDb
 );
 
 router.patch(
   '/',
-
+  auth(USER_ROLES.ADMIN, USER_ROLES.AGENCY, USER_ROLES.BUYER),
   NotificationController.readNotification
 );
 
 router.get(
   '/admin',
-
+  auth(USER_ROLES.ADMIN),
   NotificationController.adminNotificationFromDB
 );
 
 router.patch(
   '/admin',
-
+  auth(USER_ROLES.ADMIN),
   NotificationController.adminReadNotification
-);
-
-//driver
-router.get(
-  '/driver',
-
-  NotificationController.getNotificationFromDriver
-);
-
-//client
-router.get(
-  '/client',
-
-  NotificationController.getNotificationFromClient
 );
 
 router.delete(
   '/delete-all',
-  auth(USER_ROLES.ADMIN),
+  auth(USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN),
   NotificationController.deleteAllNotifications
 );
 

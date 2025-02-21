@@ -69,35 +69,6 @@ const adminReadNotification = async () => {
   return result;
 };
 
-const driverNotificationFromDB = async () => {
-  const result = await Notification.find({ type: USER_ROLES.AGENCY });
-  return result;
-};
-
-// read notifications only for admin
-const driverReadNotificationToDB = async (): Promise<INotification | null> => {
-  const result: any = await Notification.updateMany(
-    { type: USER_ROLES.AGENCY, read: false },
-    { $set: { read: true } },
-    { new: true }
-  );
-  return result;
-};
-const clientNotificationFromDB = async () => {
-  const result = await Notification.find({ type: USER_ROLES.BUYER });
-  return result;
-};
-
-// read notifications only for admin
-const clientReadNotificationToDB = async (): Promise<INotification | null> => {
-  const result: any = await Notification.updateMany(
-    { type: USER_ROLES.BUYER, read: false },
-    { $set: { read: true } },
-    { new: true }
-  );
-  return result;
-};
-
 const deleteAllNotifications = async () => {
   const result = await Notification.deleteMany({});
   return result;
@@ -109,8 +80,4 @@ export const NotificationService = {
   adminNotification,
   adminReadNotification,
   deleteAllNotifications,
-  driverNotificationFromDB,
-  driverReadNotificationToDB,
-  clientNotificationFromDB,
-  clientReadNotificationToDB,
 };

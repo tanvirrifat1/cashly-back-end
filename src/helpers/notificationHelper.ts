@@ -11,7 +11,8 @@ export const sendNotifications = async (data: any): Promise<INotification> => {
   if (
     data?.type === USER_ROLES.ADMIN ||
     data?.type === USER_ROLES.AGENCY ||
-    data?.type === USER_ROLES.BUYER
+    data?.type === USER_ROLES.BUYER ||
+    data?.type === USER_ROLES.SUPER_ADMIN
   ) {
     // Emit based on the user role
     socketIo.emit(`get-notification::${data?.type}`, result);
