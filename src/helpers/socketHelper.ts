@@ -3,7 +3,6 @@ import { Server } from 'socket.io';
 import { logger } from '../shared/logger';
 import { Message } from '../app/modules/message/message.model';
 import { Room } from '../app/modules/chatRoom/chatRoom.model';
-import { sendNotifications } from './notificationHelper';
 
 export const getRecieverSocketId = (recieverId: string): string | undefined => {
   return userSocketMap[recieverId];
@@ -29,10 +28,6 @@ const socket = (io: Server) => {
           senderId,
           message,
         });
-
-        // Populate the senderId field
-        // const populatedMessage = await newMessage.populate('senderId');
-        // console.log(newMessage);
 
         if (newMessage) {
           await Room.updateOne({ _id: roomId }, { $inc: { unreadCount: 1 } });
