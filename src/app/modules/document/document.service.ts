@@ -8,37 +8,7 @@ import { User } from '../user/user.model';
 import jwt, { Secret } from 'jsonwebtoken';
 import config from '../../../config';
 
-// const createDocumentToDB = async (id: string, payload: Partial<IDocument>) => {
-//   const isExist = await Document.findOne({ userId: id });
 
-//   if (isExist) {
-//     throw new ApiError(StatusCodes.BAD_REQUEST, 'User already has a document');
-//   }
-
-//   const isUser = await User.findById(id);
-
-//   const value = {
-//     ...payload,
-//     userId: id,
-//     role: isUser?.role,
-//   };
-
-//   const result = await Document.create(value);
-
-//   const isDocumentUploaded = await User.findByIdAndUpdate(id, {
-//     isDocumentUploaded: true,
-//   });
-
-//   if (!isDocumentUploaded) {
-//     throw new ApiError(StatusCodes.BAD_REQUEST, 'Document not uploaded');
-//   }
-
-//   if (!result) {
-//     throw new Error('Document not created!');
-//   }
-
-//   return result;
-// };
 
 const createDocumentToDB = async (id: string, payload: Partial<IDocument>) => {
   const isUser = await User.findById(id);

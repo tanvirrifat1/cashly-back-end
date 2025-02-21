@@ -41,7 +41,7 @@ const forgetPassword = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: 'Please check your email, we send a OTP!',
+    message: 'Please check your phone, we send a OTP!',
     data: result,
   });
 });
