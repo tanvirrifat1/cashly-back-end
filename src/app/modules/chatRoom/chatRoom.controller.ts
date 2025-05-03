@@ -40,6 +40,7 @@ const getAllInboxs = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 export const ChatRoomController = {
   getOrCreateRoom,
   getAllInboxs,

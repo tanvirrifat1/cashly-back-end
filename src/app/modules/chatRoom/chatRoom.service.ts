@@ -36,10 +36,9 @@ const getAllInboxs = async (id: string, query: Record<string, unknown>) => {
     .limit(size)
     .lean();
 
-  console.log(messages);
-
   // Fetch full last message for each room
   const roomIds = messages.map(msg => msg._id);
+
   const lastMessages = await Message.aggregate([
     { $match: { roomId: { $in: roomIds } } },
     { $sort: { createdAt: -1 } },

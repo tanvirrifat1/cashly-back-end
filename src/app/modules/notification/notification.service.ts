@@ -1,7 +1,5 @@
 import { JwtPayload } from 'jsonwebtoken';
 import { Notification } from './notification.model';
-import { SortOrder } from 'mongoose';
-import { INotification } from './notification.interface';
 import { USER_ROLES } from '../../../enums/user';
 
 const getNotificationToDb = async (user: JwtPayload) => {
@@ -10,7 +8,7 @@ const getNotificationToDb = async (user: JwtPayload) => {
   const unredCount = await Notification.countDocuments({
     receiver: user.id,
     read: false,
-  });
+  }).sort({ createdAt: -1 });
 
   const data = {
     result,
