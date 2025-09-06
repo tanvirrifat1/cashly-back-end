@@ -12,6 +12,8 @@ import { IAgency } from '../agency/agency.interface';
 import { Agency } from '../agency/agency.model';
 import { Buyer } from '../buyer/buyer.model';
 import { sendNotifications } from '../../../helpers/notificationHelper';
+import { emailTemplate } from '../../../shared/emailTemplate';
+import { emailHelper } from '../../../helpers/emailHelper';
 
 const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
   const session = await startSession();
@@ -77,16 +79,26 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
 
     // Generate OTP
     const otp = generateOTP();
+
+    const emailValues = {
+      name: `${payload.firstName} ${payload.lastName} `,
+      otp,
+      email: payload.email,
+    };
+
+    const accountEmailTemplate = emailTemplate.createAccount(emailValues);
+    emailHelper.sendEmail(accountEmailTemplate);
+
     const authentication = {
       oneTimeCode: otp,
       expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
     };
 
-    await twilioClient.messages.create({
-      body: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: user.phone || payload.phone,
-    });
+    // await twilioClient.messages.create({
+    //   body: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: user.phone || payload.phone,
+    // });
 
     // await twilioClient.messages.create({
     //   from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
@@ -139,6 +151,7 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
     payload.role = USER_ROLES.BUYER;
 
     const isEmail = await User.findOne({ email: payload.email });
+
     if (isEmail) {
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Email already exist');
     }
@@ -190,16 +203,23 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
 
     // Generate OTP
     const otp = generateOTP();
-    const authentication = {
-      oneTimeCode: otp,
-      expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
+
+    // Generate OTP
+
+    const emailValues = {
+      name: `${payload.firstName} ${payload.lastName} `,
+      otp,
+      email: payload.email,
     };
 
-    await twilioClient.messages.create({
-      body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: user.phone || payload.phone,
-    });
+    const accountEmailTemplate = emailTemplate.createAccount(emailValues);
+    emailHelper.sendEmail(accountEmailTemplate);
+
+    // await twilioClient.messages.create({
+    //   body: `Your OTP is: ${otp}. It will expire in 5 minutes.`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: user.phone || payload.phone,
+    // });
 
     // await twilioClient.messages.create({
     //   from: `whatsapp:${process.env.TWILIO_WHATAPP_NUMBER}`,
@@ -207,6 +227,11 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
     //   contentVariables: `{"1":"${otp}","2":"5"}`,
     //   to: `whatsapp:${user.phone || payload.phone}`,
     // });
+
+    const authentication = {
+      oneTimeCode: otp,
+      expireAt: new Date(Date.now() + 30 * 60000), // OTP valid for 3 minutes
+    };
 
     // Update user with authentication details
     const updatedAuthenticationUser = await User.findOneAndUpdate(
