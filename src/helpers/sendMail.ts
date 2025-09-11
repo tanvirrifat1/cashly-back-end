@@ -109,7 +109,7 @@ export async function sendEmail(email: string, subject: string, text: string) {
               <p>${text}</p>
             </div>
             <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} FARBABYZ-DRIP. All rights reserved.</p>
+              <p>&copy; ${new Date().getFullYear()} Cashly. All rights reserved.</p>
             </div>
           </div>
         </body>
