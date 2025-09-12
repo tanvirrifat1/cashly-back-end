@@ -5,6 +5,7 @@ import { sendNotifications } from '../../../helpers/notificationHelper';
 import { twilioClient } from '../../../shared/mesg.send';
 import mongoose from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
+import { sendEmail } from '../../../helpers/sendMail';
 
 // const suspendUser = async (userId: string, days: number) => {
 //   console.log(userId);
@@ -185,11 +186,17 @@ const reactivateUsers = async () => {
   }
 
   if (agencies[0].loginStatus === 'approved') {
-    await twilioClient.messages.create({
-      body: `Your account has been reactivated.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: agencies[0].phone || '',
-    });
+    // await twilioClient.messages.create({
+    //   body: `Your account has been reactivated.`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: agencies[0].phone || '',
+    // });
+
+    sendEmail(
+      agencies[0].email,
+      'Your Account Has Been Approved 🎉',
+      'Congratulations! Your account has been reactivated. You can now log in and start using our services.'
+    ).catch(err => console.error('Email failed:', err));
   }
 
   return { message: 'Agencies and sub-users reactivated successfully.' };
@@ -271,11 +278,17 @@ const ActiveUser = async (userId: string) => {
   });
 
   if (user?.loginStatus === 'approved') {
-    await twilioClient.messages.create({
-      body: `Your account has been reactivated.`,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: user.phone,
-    });
+    // await twilioClient.messages.create({
+    //   body: `Your account has been reactivated.`,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: user.phone,
+    // });
+
+    sendEmail(
+      user.email,
+      'Your Account Has Been Approved 🎉',
+      'Congratulations! Your account has been reactivated. You can now log in and start using our services.'
+    ).catch(err => console.error('Email failed:', err));
   }
 
   return { user, reactivatedSubUsers };

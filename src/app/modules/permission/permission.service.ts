@@ -41,6 +41,7 @@ const getAllBuyer = async (query: Record<string, unknown>) => {
   };
   return data;
 };
+
 const getAllAgency = async (query: Record<string, unknown>) => {
   const { page, limit } = query;
 
