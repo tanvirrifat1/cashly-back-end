@@ -31,7 +31,6 @@ cron.schedule('* * * * *', async () => {
 
 cron.schedule('* * * * *', async () => {
   await SubscriptationService.updateExpiredSubscriptions();
-  logger.info('Expired subscriptions updated');
 });
 
 app.use(express.json());
