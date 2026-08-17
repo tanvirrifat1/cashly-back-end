@@ -36,7 +36,7 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
     if (!payload.phone) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'Please provide phone number'
+        'Please provide phone number',
       );
     }
 
@@ -57,7 +57,7 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
     if (!agency) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'Failed to create Influencer'
+        'Failed to create Influencer',
       );
     }
 
@@ -111,13 +111,13 @@ const createAgencyToDB = async (payload: Partial<IUser & IAgency>) => {
     const updatedAuthenticationUser = await User.findOneAndUpdate(
       { _id: user._id },
       { $set: { authentication } },
-      { session, new: true }
+      { session, new: true },
     );
 
     if (!updatedAuthenticationUser) {
       throw new ApiError(
         StatusCodes.NOT_FOUND,
-        'User not found for authentication update'
+        'User not found for authentication update',
       );
     }
 
@@ -163,7 +163,7 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
     if (!payload.phone) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'Please provide phone number'
+        'Please provide phone number',
       );
     }
 
@@ -237,13 +237,13 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
     const updatedAuthenticationUser = await User.findOneAndUpdate(
       { _id: user._id },
       { $set: { authentication } },
-      { session, new: true }
+      { session, new: true },
     );
 
     if (!updatedAuthenticationUser) {
       throw new ApiError(
         StatusCodes.NOT_FOUND,
-        'User not found for authentication update'
+        'User not found for authentication update',
       );
     }
 
@@ -268,7 +268,7 @@ const createUserToDB = async (payload: Partial<IUser & IAgency>) => {
 };
 
 const getUserProfileFromDB = async (
-  user: JwtPayload
+  user: JwtPayload,
 ): Promise<Partial<IUser>> => {
   const { id } = user;
   const isExistUser = await User.findById(id).populate('agency buyer');
@@ -281,7 +281,7 @@ const getUserProfileFromDB = async (
 
 const updateProfileToDB = async (
   user: JwtPayload,
-  payload: Partial<IUser>
+  payload: Partial<IUser>,
 ): Promise<Partial<IUser | null>> => {
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);
@@ -306,6 +306,15 @@ const getSingleUser = async (id: string): Promise<IUser | null> => {
   return result;
 };
 
+const deleteAccountToDB = async (user: JwtPayload) => {
+  const result = await User.findByIdAndDelete(user?.id);
+  if (!result) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No User found');
+  }
+
+  return result;
+};
+
 //user suspend
 
 export const UserService = {
@@ -314,4 +323,5 @@ export const UserService = {
   updateProfileToDB,
   getSingleUser,
   createAgencyToDB,
+  deleteAccountToDB,
 };
