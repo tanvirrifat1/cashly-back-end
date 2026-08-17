@@ -13,10 +13,10 @@ const orderCurrency = async (data: IOrderCurrency) => {
   const isExistUser = await User.findOne({ _id: data.user });
 
   if (isExistUser?.loginStatus === 'pending') {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'You are not approved, You cannot order!'
-    );
+    // throw new ApiError(
+    //   StatusCodes.BAD_REQUEST,
+    //   'You are not approved, You cannot order!'
+    // );
   }
 
   const isUserExist = await User.findOne({ _id: data.user });
@@ -83,7 +83,7 @@ const getAllOrder = async (userId: string, query: Record<string, unknown>) => {
   // Filter by additional filterData fields
   if (Object.keys(filterData).length > 0) {
     const filterConditions = Object.entries(filterData).map(
-      ([field, value]) => ({ [field]: value })
+      ([field, value]) => ({ [field]: value }),
     );
     anyConditions.push({ $and: filterConditions });
   }
@@ -172,13 +172,13 @@ const updateOrderStatus = async (id: string, payload: IOrderCurrency) => {
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
       { $set: { status: payload.status } },
-      { new: true, session }
+      { new: true, session },
     );
 
     if (!updatedOrder) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'Failed to update the order!'
+        'Failed to update the order!',
       );
     }
 
@@ -191,13 +191,13 @@ const updateOrderStatus = async (id: string, payload: IOrderCurrency) => {
       const updatedAgencyReq = await BuyerReqForAgency.findByIdAndUpdate(
         isAgencyReq._id,
         { $set: { status: 'completed' } },
-        { new: true, session }
+        { new: true, session },
       );
 
       if (!updatedAgencyReq) {
         throw new ApiError(
           StatusCodes.BAD_REQUEST,
-          'Failed to update the agency request!'
+          'Failed to update the agency request!',
         );
       }
     }
@@ -223,7 +223,7 @@ const updateOrderStatus = async (id: string, payload: IOrderCurrency) => {
       if (!isCurrencyTransaction) {
         throw new ApiError(
           StatusCodes.BAD_REQUEST,
-          'Failed to create currency transaction!'
+          'Failed to create currency transaction!',
         );
       }
     }
