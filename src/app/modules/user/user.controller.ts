@@ -18,7 +18,7 @@ const createAgencyToDB = catchAsync(
       message:
         'Please check your phone to verify your account. We have sent you an OTP to complete the registration process.',
     });
-  }
+  },
 );
 const createUserToDB = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +34,7 @@ const createUserToDB = catchAsync(
       message:
         'Please check your phone to verify your account. We have sent you an OTP to complete the registration process.',
     });
-  }
+  },
 );
 
 const getUserProfile = catchAsync(async (req: Request, res: Response) => {
@@ -72,7 +72,7 @@ const updateProfile = catchAsync(
       message: 'Profile updated successfully',
       data: result,
     });
-  }
+  },
 );
 
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
@@ -85,10 +85,23 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteAccount = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user;
+  const result = await UserService.deleteAccountToDB(user);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Account deleted successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   getUserProfile,
   updateProfile,
   getSingleUser,
   createAgencyToDB,
   createUserToDB,
+  deleteAccount,
 };

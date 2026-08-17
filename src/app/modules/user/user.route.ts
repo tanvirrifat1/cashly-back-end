@@ -10,12 +10,12 @@ const router = express.Router();
 router.post(
   '/create-agency',
   validateRequest(UserValidation.createUserZodSchema),
-  UserController.createAgencyToDB
+  UserController.createAgencyToDB,
 );
 router.post(
   '/create-buyer',
   validateRequest(UserValidation.createUserZodSchema),
-  UserController.createUserToDB
+  UserController.createUserToDB,
 );
 
 router.get(
@@ -25,9 +25,9 @@ router.get(
     USER_ROLES.AGENCY,
     USER_ROLES.BUYER,
     USER_ROLES.SUPER_ADMIN,
-    USER_ROLES.SUB_USER
+    USER_ROLES.SUB_USER,
   ),
-  UserController.getUserProfile
+  UserController.getUserProfile,
 );
 
 router.patch(
@@ -38,22 +38,24 @@ router.patch(
     USER_ROLES.AGENCY,
     USER_ROLES.BUYER,
     USER_ROLES.SUPER_ADMIN,
-    USER_ROLES.SUB_USER
+    USER_ROLES.SUB_USER,
   ),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       req.body = UserValidation.updateZodSchema.parse(
-        JSON.parse(req.body.data)
+        JSON.parse(req.body.data),
       );
     }
     return UserController.updateProfile(req, res, next);
-  }
+  },
 );
 
 router.get(
   '/get-all-users/:id',
   auth(USER_ROLES.ADMIN),
-  UserController.getSingleUser
+  UserController.getSingleUser,
 );
+
+router.delete('/delete-account', auth(), UserController.deleteAccount);
 
 export const UserRoutes = router;
